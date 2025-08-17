@@ -1,0 +1,797 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SecgPower的个人主页 | Hello,This World!</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        /* 视频背景样式 */
+        .video-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: -1;
+        }
+
+        .video-bg video {
+            min-width: 100%;
+            min-height: 100%;
+            object-fit: cover;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        /* 视频遮罩层，增加文字可读性 */
+        .video-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.3);
+            z-index: -1;
+        }
+
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+
+            .text-shadow {
+                text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            }
+
+            .text-gradient {
+                background-clip: text;
+                -webkit-background-clip: text;
+                color: transparent;
+            }
+
+            .line-art {
+                position: relative;
+            }
+
+            .line-art::before,
+            .line-art::after {
+                content: '';
+                position: absolute;
+                background-color: theme('colors.primary');
+                transition: all 0.3s ease;
+            }
+
+            .line-art-horizontal::before {
+                height: 1px;
+                width: 0;
+                top: 0;
+                left: 0;
+            }
+
+            .line-art-horizontal::after {
+                height: 1px;
+                width: 0;
+                bottom: 0;
+                right: 0;
+            }
+
+            .line-art-vertical::before {
+                width: 1px;
+                height: 0;
+                top: 0;
+                right: 0;
+            }
+
+            .line-art-vertical::after {
+                width: 1px;
+                height: 0;
+                bottom: 0;
+                left: 0;
+            }
+
+            .line-art:hover::before,
+            .line-art:hover::after {
+                width: 100%;
+                height: 1px;
+            }
+
+            .line-art:hover::before,
+            .line-art:hover::after {
+                height: 100%;
+                width: 1px;
+            }
+        }
+
+        /* 动画效果 */
+        @keyframes slideUp {
+            from {
+                transform: translateY(30px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes lineDraw {
+            from {
+                stroke-dashoffset: 1000;
+            }
+            to {
+                stroke-dashoffset: 0;
+            }
+        }
+
+        @keyframes fillIn {
+            from {
+                fill: rgba(22, 93, 255, 0);
+            }
+            to {
+                fill: rgba(22, 93, 255, 0.1);
+            }
+        }
+
+        .line-animation {
+            stroke-dasharray: 1000;
+            animation: lineDraw 2s ease-out forwards;
+        }
+
+        .animate-line-draw {
+            stroke-dasharray: 1000;
+            animation: lineDraw 2s ease-out forwards;
+        }
+
+        .animate-fill-in {
+            animation: fillIn 1s ease-out 1s forwards;
+        }
+
+        .animate-fade-in {
+            animation: fadeIn 0.8s ease-out forwards;
+        }
+
+        .scrollbar-hide::-webkit-scrollbar {
+            display: none;
+        }
+
+        .scrollbar-hide {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#165DFF',
+                        secondary: '#69B1FF',
+                        dark: '#1F2937',
+                    },
+                    fontFamily: {
+                        inter: ['Inter', 'sans-serif'],
+                    },
+                    animation: {
+                        'bounce-slow': 'bounce 3s infinite',
+                    },
+                    keyframes: {
+                        lineDraw: {
+                            '0%': { strokeDashoffset: '1000' },
+                            '100%': { strokeDashoffset: '0' },
+                        },
+                        fillIn: {
+                            '0%': { fill: 'rgba(22, 93, 255, 0)' },
+                            '100%': { fill: 'rgba(22, 93, 255, 0.1)' },
+                        }
+                    },
+                    backgroundImage: {
+                        'grid-pattern': "url(\"data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23165DFF' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E\")",
+                    }
+                },
+            }
+        }
+    </script>
+</head>
+
+<body class="font-inter text-dark overflow-x-hidden scrollbar-hide">
+    <!-- 导航栏 -->
+    <header id="navbar" class="fixed w-full top-0 z-50 transition-all duration-300 py-4">
+        <div class="container mx-auto px-4 md:px-8 flex justify-between items-center">
+            <div class="flex items-center">
+                <div class="w-12 h-12 relative mr-3">
+                    <svg viewBox="0 0 100 100" class="w-full h-full">
+                        <path d="M20,20 L80,20 L80,80 L20,80 Z" fill="none" stroke="#165DFF" stroke-width="2"
+                              class="line-animation" />
+                        <path d="M20,20 L80,80" fill="none" stroke="#165DFF" stroke-width="2" class="line-animation" />
+                        <path d="M80,20 L20,80" fill="none" stroke="#165DFF" stroke-width="2" class="line-animation" />
+                    </svg>
+                </div>
+                <h1 class="text-xl md:text-2xl font-bold text-primary">Secg<span class="text-white">Power的个人页面</span></h1>
+            </div>
+
+            <!-- 桌面导航 -->
+            <nav class="hidden md:flex space-x-8">
+                <a href="/" class="text-white hover:text-primary transition-colors duration-300 font-medium relative">首页</a>
+                <a href="/docs/" class="text-white hover:text-primary transition-colors duration-300 font-medium relative">文档</a>
+                <a href="/projects/" class="text-white hover:text-primary transition-colors duration-300 font-medium relative">产品</a>
+            </nav>
+
+            <!-- 移动端菜单按钮 -->
+            <button id="menu-toggle" class="md:hidden text-white focus:outline-none">
+                <i class="fa fa-bars text-2xl"></i>
+            </button>
+        </div>
+
+        <!-- 移动端导航菜单 -->
+        <div id="mobile-menu" class="hidden md:hidden bg-white shadow-lg absolute w-full top-full left-0 py-4 px-4 animate-fade-in">
+            <nav class="flex flex-col space-y-4">
+                <a href="/" class="text-dark hover:text-primary transition-colors duration-300 font-medium py-2 border-b border-gray-100">首页</a>
+                <a href="/docs/" class="text-dark hover:text-primary transition-colors duration-300 font-medium py-2 border-b border-gray-100">文档</a>
+                <a href="/projects/" class="text-dark hover:text-primary transition-colors duration-300 font-medium py-2">产品</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- 英雄区域 -->
+    <section id="home" class="min-h-screen pt-24 relative overflow-hidden">
+        <!-- 视频背景 -->
+        <div class="video-bg">
+            <video autoplay muted loop playsinline>
+                <source src="video/bg.mp4" type="video/mp4">
+                您的浏览器不支持视频标签
+            </video>
+            <div class="video-overlay"></div>
+        </div>
+        
+        <div class="container mx-auto px-4 md:px-8 min-h-screen flex flex-col justify-center relative z-10">
+            <div class="max-w-3xl opacity-0" id="hero-text" style="animation: slideUp 1s ease-out 0.5s forwards;">
+                <h1 class="text-[clamp(2.5rem,6vw,4.5rem)] font-bold leading-tight mb-8">
+                    <span class="text-gradient bg-gradient-to-r from-primary to-secondary">快速浏览</span>
+                </h1>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <a href="/tools/" class="bg-white/10 backdrop-blur-sm p-6 rounded-xl hover:bg-white/20 transition-all duration-300 border border-white/20">
+                        <div class="flex items-center mb-4">
+                            <i class="fa fa-book text-primary text-2xl mr-4"></i>
+                            <h3 class="text-xl font-semibold text-white">开发工具</h3>
+                        </div>
+                        <p class="text-white/80">寻找合适简单快捷易上手的服务与工具</p>
+                    </a>
+                    
+                    <a href="/docs/" class="bg-white/10 backdrop-blur-sm p-6 rounded-xl hover:bg-white/20 transition-all duration-300 border border-white/20">
+                        <div class="flex items-center mb-4">
+                            <i class="fa fa-code text-primary text-2xl mr-4"></i>
+                            <h3 class="text-xl font-semibold text-white">文档中心</h3>
+                        </div>
+                        <p class="text-white/80">查看可能对开发或其他方面有帮助的文献</p>
+                    </a>
+                    
+                    <a href="/projects/" class="bg-white/10 backdrop-blur-sm p-6 rounded-xl hover:bg-white/20 transition-all duration-300 border border-white/20">
+                        <div class="flex items-center mb-4">
+                            <i class="fa fa-graduation-cap text-primary text-2xl mr-4"></i>
+                            <h3 class="text-xl font-semibold text-white">项目中心</h3>
+                        </div>
+                        <p class="text-white/80">寻找您需要的产品及其附属项目</p>
+                    </a>
+                    
+                    <a href="/docs/faq/" class="bg-white/10 backdrop-blur-sm p-6 rounded-xl hover:bg-white/20 transition-all duration-300 border border-white/20">
+                        <div class="flex items-center mb-4">
+                            <i class="fa fa-question-circle text-primary text-2xl mr-4"></i>
+                            <h3 class="text-xl font-semibold text-white">常见问题</h3>
+                        </div>
+                        <p class="text-white/80">常见的问题解答，快速找到您需要的答案</p>
+                    </a>
+                </div>
+                <!--
+                <div class="mt-10">
+                    <a href="/docs/" class="inline-flex items-center text-primary hover:text-secondary transition-colors duration-300 text-lg font-medium">
+                        <span>查看所有文档</span>
+                        <i class="fa fa-arrow-right ml-2"></i>
+                    </a>
+                </div>-->
+            </div>
+        </div>
+
+        <div class="absolute bottom-10 left-1/2 transform -translate-x-1/2 text-center animate-bounce">
+            <a href="#about" class="text-white hover:text-primary transition-colors duration-300">
+                <i class="fa fa-angle-down text-3xl"></i>
+            </a>
+        </div>
+    </section>
+
+    <!-- 主要内容区：左主右次结构 -->
+    <div class="flex flex-col lg:flex-row">
+        <!-- 左侧主内容区 - 文档链接和详细内容 -->
+        <main class="w-full lg:w-2/3">
+            <!-- 文档列表区域 -->
+            <section id="docs" class="py-24 bg-white relative overflow-hidden">
+                <div class="container mx-auto px-4 md:px-8">
+                    <div class="text-center mb-16 opacity-0" data-scroll-animate>
+                        <h2 class="text-[clamp(2rem,4vw,3rem)] font-bold mb-4">所有<span class="text-primary">项目</span></h2>
+                        <p class="text-gray-600 max-w-2xl mx-auto">这里是我参与或独自开发的项目，欢迎借鉴和使用。</p>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16">
+                        <div class="bg-gray-50 rounded-xl p-8 transform hover:-translate-y-2 transition-all duration-300 shadow-sm hover:shadow-md opacity-0" data-scroll-animate>
+                            <div class="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mb-6">
+                                <i class="fa fa-html5 text-primary text-3xl"></i>
+                            </div>
+                            <h3 class="text-2xl font-semibold mb-4">游戏开发</h3>
+                            <ul class="space-y-3 mb-6">
+                                <li class="flex items-start">
+                                    <i class="fa fa-angle-right text-primary mt-1 mr-2"></i>
+                                    <a href="/docs/html-basics" class="hover:text-primary transition-colors">关于Phigros</a>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fa fa-angle-right text-primary mt-1 mr-2"></i>
+                                    <a href="/docs/css-advanced" class="hover:text-primary transition-colors">Scratch/TurboWarp游戏项目</a>
+                                </li>
+                            </ul>
+                            <a href="/docs/frontend-all" class="text-primary hover:text-secondary transition-colors inline-flex items-center">
+                                查看全部产品 <i class="fa fa-arrow-right ml-1"></i>
+                            </a>
+                        </div>
+
+                        <div class="bg-gray-50 rounded-xl p-8 transform hover:-translate-y-2 transition-all duration-300 shadow-sm hover:shadow-md opacity-0" data-scroll-animate>
+                            <div class="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mb-6">
+                                <i class="fa fa-paint-brush text-primary text-3xl"></i>
+                            </div>
+                            <h3 class="text-2xl font-semibold mb-4">音乐/美术</h3>
+                            <ul class="space-y-3 mb-6">
+                                <li class="flex items-start">
+                                    <i class="fa fa-angle-right text-primary mt-1 mr-2"></i>
+                                    <a href="#" class="hover:text-primary transition-colors">《蓝银色的海》-洛天依</a>
+                                </li>
+                            </ul>
+                            没有更多了
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <div class="bg-gray-50 rounded-xl p-8 transform hover:-translate-y-2 transition-all duration-300 shadow-sm hover:shadow-md opacity-0" data-scroll-animate>
+                            <div class="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mb-6">
+                                <i class="fa fa-cogs text-primary text-3xl"></i>
+                            </div>
+                            <h3 class="text-2xl font-semibold mb-4">开发工具</h3>
+                            <ul class="space-y-3 mb-6">
+                                <li class="flex items-start">
+                                    <i class="fa fa-angle-right text-primary mt-1 mr-2"></i>
+                                    <a href="/docs/git-workflow" class="hover:text-primary transition-colors">Python开发</a>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fa fa-angle-right text-primary mt-1 mr-2"></i>
+                                    <a href="/docs/ci-cd" class="hover:text-primary transition-colors">前端开发与设计</a>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fa fa-angle-right text-primary mt-1 mr-2"></i>
+                                    <a href="/docs/performance" class="hover:text-primary transition-colors">代码转换</a>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fa fa-angle-right text-primary mt-1 mr-2"></i>
+                                    <a href="/docs/debugging" class="hover:text-primary transition-colors">各种调试工具</a>
+                                </li>
+                            </ul>
+                            <a href="/docs/tools-all" class="text-primary hover:text-secondary transition-colors inline-flex items-center">
+                                查看全部 <i class="fa fa-arrow-right ml-1"></i>
+                            </a>
+                        </div>
+
+                        <div class="bg-gray-50 rounded-xl p-8 transform hover:-translate-y-2 transition-all duration-300 shadow-sm hover:shadow-md opacity-0" data-scroll-animate>
+                            <div class="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mb-6">
+                                <i class="fa fa-book text-primary text-3xl"></i>
+                            </div>
+                            <h3 class="text-2xl font-semibold mb-4">学习资源</h3>
+                            <ul class="space-y-3 mb-6">
+                                <li class="flex items-start">
+                                    <i class="fa fa-angle-right text-primary mt-1 mr-2"></i>
+                                    <a href="/docs/learning-paths" class="hover:text-primary transition-colors">在线课程</a>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fa fa-angle-right text-primary mt-1 mr-2"></i>
+                                    <a href="/docs/recommended-books" class="hover:text-primary transition-colors">推荐书籍</a>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fa fa-angle-right text-primary mt-1 mr-2"></i>
+                                    <a href="/docs/online-courses" class="hover:text-primary transition-colors">优质社区</a>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fa fa-angle-right text-primary mt-1 mr-2"></i>
+                                    <a href="/docs/practice-projects" class="hover:text-primary transition-colors">项目推荐</a>
+                                </li>
+                            </ul>
+                            <a href="/docs/resources-all" class="text-primary hover:text-secondary transition-colors inline-flex items-center">
+                                查看全部 <i class="fa fa-arrow-right ml-1"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 关于我 -->
+            <section id="about" class="py-24 bg-white relative overflow-hidden">
+                <div class="container mx-auto px-4 md:px-8">
+                    <div class="text-center mb-16 opacity-0" data-scroll-animate>
+                        <h2 class="text-[clamp(2rem,4vw,3rem)] font-bold mb-4">关于<span class="text-primary">我</span></h2>
+                        <p class="text-gray-600 max-w-2xl mx-auto">你居然认为我会认真写这个板块吗？不可能！！！</p>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                        <div class="bg-white rounded-xl shadow-lg p-8 transform hover:-translate-y-2 transition-all duration-300 line-art line-art-horizontal line-art-vertical opacity-0" data-scroll-animate>
+                            <div class="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center mb-6 mx-auto">
+                                <i class="fa fa-lightbulb-o text-primary text-3xl"></i>
+                            </div>
+                            <h3 class="text-xl font-semibold mb-4 text-center">？？？</h3>
+                            <p class="text-gray-600 text-center">这个板块永远也不可能有实际内容</p>
+                        </div>
+                    </div>
+
+                    <!-- 数据统计 -->
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-8 mt-20">
+                        <div class="text-center opacity-0" data-scroll-animate>
+                            <div class="text-4xl md:text-5xl font-bold text-primary mb-2 counter" data-target="8">0</div>
+                            <p class="text-gray-600">码龄</p>
+                        </div>
+                        <div class="text-center opacity-0" data-scroll-animate>
+                            <div class="text-4xl md:text-5xl font-bold text-primary mb-2 counter" data-target="18">0</div>
+                            <p class="text-gray-600">完成项目</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 技能 -->
+            <section id="skills" class="py-24 bg-gray-50 relative overflow-hidden">
+                <div class="container mx-auto px-4 md:px-8">
+                    <div class="text-center mb-16 opacity-0" data-scroll-animate>
+                        <h2 class="text-[clamp(2rem,4vw,3rem)] font-bold mb-4">真·<span class="text-primary">技能</span></h2>
+                        <p class="text-gray-600 max-w-2xl mx-auto">掌握多种技术和工具，应付多种需求</p>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                        <div class="bg-white rounded-xl shadow-lg overflow-hidden transform hover:-translate-y-2 transition-all duration-300 opacity-0" data-scroll-animate>
+                            <div class="h-48 overflow-hidden">
+                                <img src="https://picsum.photos/600/400?random=2" alt="网站开发技能" class="w-full h-full object-cover transform hover:scale-110 transition-transform duration-500">
+                            </div>
+                            <div class="p-8">
+                                <div class="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-4">
+                                    <i class="fa fa-code text-primary text-xl"></i>
+                                </div>
+                                <h3 class="text-xl font-semibold mb-3">前端设计</h3>
+                                <p class="text-gray-600 mb-4">“略懂”HTML5、CSS3、JavaScript，设计一些低端网页</p>
+                            </div>
+                        </div>
+
+                        <div class="bg-white rounded-xl shadow-lg overflow-hidden transform hover:-translate-y-2 transition-all duration-300 opacity-0" data-scroll-animate>
+                            <div class="h-48 overflow-hidden">
+                                <img src="https://picsum.photos/600/400?random=4" alt="UI/UX设计技能" class="w-full h-full object-cover transform hover:scale-110 transition-transform duration-500">
+                            </div>
+                            <div class="p-8">
+                                <div class="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-4">
+                                    <i class="fa fa-desktop text-primary text-xl"></i>
+                                </div>
+                                <h3 class="text-xl font-semibold mb-3">游戏开发</h3>
+                                <p class="text-gray-600 mb-4">“了解”Python,C#,C++等主流语言，善于自创或魔改游戏</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 作品展示 -->
+            <section id="works" class="py-24 bg-white relative overflow-hidden">
+                <div class="container mx-auto px-4 md:px-8">
+                    <div class="text-center mb-16 opacity-0" data-scroll-animate>
+                        <h2 class="text-[clamp(2rem,4vw,3rem)] font-bold mb-4">精选<span class="text-primary">产品</span></h2>
+                        <p class="text-gray-600 max-w-2xl mx-auto">探索我的部分精选项目，感受科技的力量吧桀桀桀桀桀</p>
+                    </div>
+
+                    <!-- 筛选器 -->
+                    <div class="flex flex-wrap justify-center gap-4 mb-12 opacity-0" data-scroll-animate>
+                        <button class="filter-btn active px-6 py-2 rounded-full bg-primary text-white transition-all duration-300" data-filter="all">全部</button>
+                        <button class="filter-btn px-6 py-2 rounded-full bg-gray-100 text-gray-600 hover:bg-primary/10 transition-all duration-300" data-filter="app">应用程序</button>
+                        <button class="filter-btn px-6 py-2 rounded-full bg-gray-100 text-gray-600 hover:bg-primary/10 transition-all duration-300" data-filter="games">游戏开发</button>
+                    </div>
+
+                    <!-- 作品网格 -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                        <div class="work-item opacity-0" data-category="app" data-scroll-animate>
+                            <div class="relative overflow-hidden rounded-xl group">
+                                <img src="https://picsum.photos/600/400?random=13" alt="应用程序项目" class="w-full h-64 object-cover transition-transform duration-500 group-hover:scale-110">
+                                <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-6">
+                                    <h3 class="text-white text-xl font-semibold mb-2">多媒体播放器</h3>
+                                    <p class="text-white/80 mb-4">基于Web技术开发的多功能媒体播放器</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- 右侧次要内容区 -->
+        <aside class="w-full lg:w-1/3 bg-gray-50 p-8 lg:sticky lg:top-24">
+            <div class="bg-white rounded-xl shadow-lg p-8 mb-8">
+                <div class="text-center mb-6">
+                    <div class="w-32 h-32 rounded-full overflow-hidden mx-auto mb-4 border-4 border-primary/20">
+                        <img src="img/t.jpg" alt="SP的头像" class="w-full h-full object-cover">
+                    </div>
+                    <h3 class="text-2xl font-bold">SecgPower</h3>
+                    <p class="text-primary">3年游戏5年开发</p>
+                </div>
+
+                <div class="space-y-4">
+                    <div class="flex items-center">
+                        <div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center mr-3">
+                            <i class="fa fa-envelope text-primary"></i>
+                        </div>
+                        <span>3822415948@qq.com</span>
+                    </div>
+                    
+                    <div class="flex items-center">
+                        <div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center mr-3">
+                            <i class="fa fa-phone text-primary"></i>
+                        </div>
+                        <span>+86 188 5644 57**（自己猜~）</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-xl shadow-lg p-8 mb-8">
+                <h3 class="text-xl font-semibold mb-6">Language</h3>
+                <div class="flex flex-wrap gap-2">
+                    <span class="px-3 py-1 bg-primary/10 text-primary rounded-full text-sm">HTML5</span>
+                    <span class="px-3 py-1 bg-primary/10 text-primary rounded-full text-sm">CSS3</span>
+                    <span class="px-3 py-1 bg-primary/10 text-primary rounded-full text-sm">JavaScript</span>
+                    <span class="px-3 py-1 bg-primary/10 text-primary rounded-full text-sm">Java</span>
+                    <span class="px-3 py-1 bg-primary/10 text-primary rounded-full text-sm">Python</span>
+                    <span class="px-3 py-1 bg-primary/10 text-primary rounded-full text-sm">Lua</span>
+                    <span class="px-3 py-1 bg-primary/10 text-primary rounded-full text-sm">C#</span>
+                    <span class="px-3 py-1 bg-primary/10 text-primary rounded-full text-sm">C++</span>
+                    <span class="px-3 py-1 bg-primary/10 text-primary rounded-full text-sm">Brainfuck</span>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-xl shadow-lg p-8">
+                <h3 class="text-xl font-semibold mb-6">社交媒体</h3>
+                <div class="flex space-x-4">
+                    <a href="https://github.com/SecgPower" class="w-12 h-12 rounded-full bg-primary text-white flex items-center justify-center hover:bg-primary/90 transition-colors duration-300">
+                        <i class="fa fa-github"></i>
+                    </a>
+                    <a href="https://user.qzone.qq.com/3822415948" class="w-12 h-12 rounded-full bg-primary text-white flex items-center justify-center hover:bg-primary/90 transition-colors duration-300">
+                        <i class="fa fa-qq"></i>
+                    </a>
+                </div>
+            </div>
+        </aside>
+    </div>
+
+    <!-- 页脚 -->
+    <footer class="bg-dark text-white py-12">
+        <div class="container mx-auto px-4 md:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
+                <div>
+                    <div class="flex items-center mb-6">
+                        <div class="w-12 h-12 relative mr-3">
+                            <svg viewBox="0 0 100 100" class="w-full h-full">
+                                <path d="M20,20 L80,20 L80,80 L20,80 Z" fill="none" stroke="#165DFF" stroke-width="2" />
+                                <path d="M20,20 L80,80" fill="none" stroke="#165DFF" stroke-width="2" />
+                                <path d="M80,20 L20,80" fill="none" stroke="#165DFF" stroke-width="2" />
+                            </svg>
+                        </div>
+                        <h2 class="text-xl font-bold text-primary">开发者：<span class="text-white">SecgPower</span></h2>
+                    </div>
+                    <p class="text-gray-400 mb-6">专注“三年游戏，五年开发”</p>
+                    <div class="flex space-x-4">
+                        <a href="https://github.com/SecgPower" class="text-gray-400 hover:text-primary transition-colors duration-300">
+                            <i class="fa fa-github"></i>
+                        </a>
+                        <a href="https://user.qzone.qq.com/3822415948" class="text-gray-400 hover:text-primary transition-colors duration-300">
+                            <i class="fa fa-qq"></i>
+                        </a>
+                    </div>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold mb-6">快速链接</h3>
+                    <ul class="space-y-3">
+                        <li><a href="/" class="text-gray-400 hover:text-primary transition-colors duration-300">首页</a></li>
+                        <li><a href="/docs/" class="text-gray-400 hover:text-primary transition-colors duration-300">文档</a></li>
+                        <li><a href="/about/" class="text-gray-400 hover:text-primary transition-colors duration-300">关于</a></li>
+                        <li><a href="/projects/" class="text-gray-400 hover:text-primary transition-colors duration-300">产品</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-gray-800 pt-8 flex flex-col md:flex-row justify-between items-center">
+                <p class="text-gray-400 text-sm mb-4 md:mb-0">© GitHub Page 保留所有权利。</p>
+                <div class="flex space-x-6"><!--
+                    <a href="#" class="text-gray-400 hover:text-primary transition-colors duration-300 text-sm">隐私政策</a>
+                    <a href="#" class="text-gray-400 hover:text-primary transition-colors duration-300 text-sm">使用条款</a>
+                --></div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // 导航栏滚动效果
+        const navbar = document.getElementById('navbar');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 50) {
+                navbar.classList.add('bg-white', 'shadow-md');
+                navbar.classList.remove('py-4');
+                navbar.classList.add('py-3');
+                // 改变导航文字颜色
+                document.querySelectorAll('#navbar a').forEach(link => {
+                    link.classList.remove('text-white');
+                    link.classList.add('text-dark');
+                });
+                // 改变logo文字颜色
+                document.querySelector('#navbar h1 span').classList.remove('text-white');
+                document.querySelector('#navbar h1 span').classList.add('text-dark');
+            } else {
+                navbar.classList.remove('bg-white', 'shadow-md');
+                navbar.classList.remove('py-3');
+                navbar.classList.add('py-4');
+                // 恢复导航文字颜色
+                document.querySelectorAll('#navbar a').forEach(link => {
+                    link.classList.add('text-white');
+                    link.classList.remove('text-dark');
+                });
+                // 恢复logo文字颜色
+                document.querySelector('#navbar h1 span').classList.add('text-white');
+                document.querySelector('#navbar h1 span').classList.remove('text-dark');
+            }
+        });
+
+        // 移动端菜单切换
+        const menuToggle = document.getElementById('menu-toggle');
+        const mobileMenu = document.getElementById('mobile-menu');
+        menuToggle.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        // 平滑滚动
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href');
+                if (targetId === '#') return;
+
+                const targetElement = document.querySelector(targetId);
+                if (targetElement) {
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 80,
+                        behavior: 'smooth'
+                    });
+                    // 关闭移动菜单
+                    if (!mobileMenu.classList.contains('hidden')) {
+                        mobileMenu.classList.add('hidden');
+                    }
+                }
+            });
+        });
+
+        // 滚动动画
+        const scrollElements = document.querySelectorAll('[data-scroll-animate]');
+        const elementInView = (el, dividend = 1) => {
+            const elementTop = el.getBoundingClientRect().top;
+            return (
+                elementTop <= (window.innerHeight || document.documentElement.clientHeight) / dividend
+            );
+        };
+
+        const displayScrollElement = (element) => {
+            element.classList.add('animate-fade-in');
+            element.classList.remove('opacity-0');
+        };
+        const hideScrollElement = (element) => {
+            element.classList.remove('animate-fade-in');
+            element.classList.add('opacity-0');
+        };
+
+        const handleScrollAnimation = () => {
+            scrollElements.forEach((el) => {
+                if (elementInView(el, 1.25)) {
+                    displayScrollElement(el);
+                } else {
+                    hideScrollElement(el);
+                }
+            });
+        };
+
+        window.addEventListener('scroll', () => {
+            handleScrollAnimation();
+        });
+
+        // 初始化动画
+        handleScrollAnimation();
+
+        // 数字计数动画
+        const counters = document.querySelectorAll('.counter');
+        const speed = 200;
+
+        const animateCounters = () => {
+            counters.forEach(counter => {
+                const target = +counter.getAttribute('data-target');
+                const count = +counter.innerText;
+                const inc = target / speed;
+
+                if (count < target) {
+                    counter.innerText = Math.ceil(count + inc);
+                    setTimeout(animateCounters, 1);
+                } else {
+                    counter.innerText = target;
+                }
+            });
+        };
+
+        // 检测元素是否进入视图
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    animateCounters();
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.5 });
+
+        // 观察第一个计数器元素
+        if (counters.length > 0) {
+            observer.observe(counters[0]);
+        }
+
+        // 作品筛选
+        const filterButtons = document.querySelectorAll('.filter-btn');
+        const workItems = document.querySelectorAll('.work-item');
+
+        filterButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                // 移除所有按钮的active类
+                filterButtons.forEach(btn => {
+                    btn.classList.remove('active', 'bg-primary', 'text-white');
+                    btn.classList.add('bg-gray-100', 'text-gray-600');
+                });
+
+                // 添加当前按钮的active类
+                button.classList.add('active', 'bg-primary', 'text-white');
+                button.classList.remove('bg-gray-100', 'text-gray-600');
+
+                const filter = button.getAttribute('data-filter');
+
+                workItems.forEach(item => {
+                    if (filter === 'all' || item.getAttribute('data-category') === filter) {
+                        item.style.display = 'block';
+                        setTimeout(() => {
+                            item.classList.remove('opacity-0');
+                            item.classList.add('opacity-100');
+                        }, 50);
+                    } else {
+                        item.classList.remove('opacity-100');
+                        item.classList.add('opacity-0');
+                        setTimeout(() => {
+                            item.style.display = 'none';
+                        }, 300);
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
