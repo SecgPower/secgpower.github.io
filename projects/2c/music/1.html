@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="ANSI">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>洛天依 - 蓝银色的海 | 音乐播放</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#165DFF',
+                        secondary: '#69B1FF',
+                        dark: '#1F2937',
+                    },
+                    fontFamily: {
+                        inter: ['Inter', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .text-gradient {
+                background-clip: text;
+                -webkit-background-clip: text;
+                color: transparent;
+            }
+            .scrollbar-hide::-webkit-scrollbar {
+                display: none;
+            }
+            .scrollbar-hide {
+                -ms-overflow-style: none;
+                scrollbar-width: none;
+            }
+        }
+
+        /* 动画效果 */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-in {
+            animation: fadeIn 0.8s ease-out forwards;
+        }
+
+        /* 播放器样式 */
+        .audio-player {
+            transition: all 0.3s ease;
+        }
+        .progress-bar {
+            height: 4px;
+            background-color: #e2e8f0;
+            border-radius: 2px;
+            cursor: pointer;
+            transition: height 0.2s;
+        }
+        .progress-bar:hover {
+            height: 6px;
+        }
+        .progress-fill {
+            height: 100%;
+            background-color: #165DFF;
+            border-radius: 2px;
+            width: 0%;
+            transition: width 0.1s linear;
+        }
+        .volume-slider {
+            width: 0;
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+        .volume-container:hover .volume-slider {
+            width: 100px;
+            opacity: 1;
+        }
+    </style>
+</head>
+<body class="font-inter text-dark bg-gray-50 scrollbar-hide">
+    <!-- 导航栏 -->
+    <header id="navbar" class="fixed w-full top-0 z-50 transition-all duration-300 py-4 bg-white shadow-md">
+        <div class="container mx-auto px-4 md:px-8 flex justify-between items-center">
+            <div class="flex items-center">
+                <div class="w-12 h-12 relative mr-3">
+                    <svg viewBox="0 0 100 100" class="w-full h-full">
+                        <path d="M20,20 L80,20 L80,80 L20,80 Z" fill="none" stroke="#165DFF" stroke-width="2"/>
+                        <path d="M20,20 L80,80" fill="none" stroke="#165DFF" stroke-width="2"/>
+                        <path d="M80,20 L20,80" fill="none" stroke="#165DFF" stroke-width="2"/>
+                    </svg>
+                </div>
+                <h1 class="text-xl font-bold text-primary">Secg<span class="text-dark">Power的个人页面</span></h1>
+            </div>
+
+            <!-- 桌面导航 -->
+            <nav class="hidden md:flex space-x-8">
+                <a href="/" class="text-dark hover:text-primary transition-colors duration-300 font-medium">首页</a>
+                <a href="/docs/" class="text-dark hover:text-primary transition-colors duration-300 font-medium">文档</a>
+                <a href="/projects/" class="text-primary border-b-2 border-primary pb-1 font-medium">产品</a>
+            </nav>
+
+            <!-- 移动端菜单按钮 -->
+            <button id="menu-toggle" class="md:hidden text-dark focus:outline-none">
+                <i class="fa fa-bars text-2xl"></i>
+            </button>
+        </div>
+
+        <!-- 移动端导航菜单 -->
+        <div id="mobile-menu" class="hidden md:hidden bg-white shadow-lg absolute w-full py-4 px-4">
+            <nav class="flex flex-col space-y-4">
+                <a href="/" class="text-dark hover:text-primary transition-colors duration-300 font-medium py-2 border-b border-gray-100">首页</a>
+                <a href="/docs/" class="text-dark hover:text-primary transition-colors duration-300 font-medium py-2 border-b border-gray-100">文档</a>
+                <a href="/projects/" class="text-primary font-medium py-2">产品</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- 主内容区 -->
+    <main class="pt-28 pb-16">
+        <!-- 音乐头部 -->
+        <section class="bg-white py-12 md:py-20">
+            <div class="container mx-auto px-4 md:px-8">
+                <div class="flex flex-col md:flex-row md:items-center justify-between mb-12 opacity-0" data-scroll-animate>
+                    <div>
+                        <h1 class="text-[clamp(1.8rem,4vw,2.5rem)] font-bold mb-4">蓝银色的海</h1>
+                        <p class="text-gray-600 max-w-2xl">洛天依 (翻唱) | 原唱: 张碧晨</p>
+                    </div>
+                    <div class="mt-6 md:mt-0 flex space-x-4">
+                        <a href="蓝银色的海-洛天依.mp3" class="bg-primary hover:bg-primary/90 text-white px-6 py-3 rounded-lg transition-colors duration-300 flex items-center">
+                            <i class="fa fa-download mr-2"></i> 下载
+                        </a>
+                    </div>
+                </div>
+
+                <!-- 音乐播放区 -->
+                <div class="rounded-xl overflow-hidden shadow-lg bg-gradient-to-br from-primary/5 to-secondary/10 p-6 md:p-10 opacity-0" data-scroll-animate>
+                    <div class="flex flex-col md:flex-row items-center gap-8">
+                        <!-- 专辑封面 -->
+                        <div class="w-64 h-64 md:w-80 md:h-80 rounded-lg overflow-hidden shadow-xl flex-shrink-0">
+                            <img src="曲绘.png" alt="蓝银色的海 - 专辑封面" class="w-full h-full object-cover">
+                        </div>
+                        
+                        <!-- 播放器控件 -->
+                        <div class="w-full max-w-2xl audio-player">
+                            <!-- 播放控制 -->
+                            <div class="flex items-center justify-center mb-8">
+                                <button class="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center text-dark hover:bg-gray-200 transition-colors mr-6">
+                                    <i class="fa fa-step-backward"></i>
+                                </button>
+                                <button id="play-pause-btn" class="w-20 h-20 rounded-full bg-primary flex items-center justify-center text-white hover:bg-primary/90 transition-colors">
+                                    <i id="play-icon" class="fa fa-play text-2xl"></i>
+                                    <i id="pause-icon" class="fa fa-pause text-2xl hidden"></i>
+                                </button>
+                                <button class="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center text-dark hover:bg-gray-200 transition-colors ml-6">
+                                    <i class="fa fa-step-forward"></i>
+                                </button>
+                            </div>
+                            
+                            <!-- 进度条 -->
+                            <div class="mb-2">
+                                <div class="progress-bar relative">
+                                    <div class="progress-fill" id="progress-fill"></div>
+                                    <div class="absolute top-1/2 left-0 w-4 h-4 bg-primary rounded-full transform -translate-y-1/2" id="progress-handle"></div>
+                                </div>
+                            </div>
+                            
+                            <!-- 时间显示 -->
+                            <div class="flex justify-between text-sm text-gray-500 mb-6">
+                                <span id="current-time">00:00</span>
+                                <span id="total-time">00:00</span>
+                            </div>
+                            
+                            <!-- 音量控制 -->
+                            <div class="flex items-center volume-container">
+                                <button class="text-gray-600 mr-3">
+                                    <i class="fa fa-volume-up"></i>
+                                </button>
+                                <input type="range" min="0" max="100" value="80" class="volume-slider h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-primary">
+                                
+                                <div class="ml-auto flex items-center space-x-6">
+                                    <button class="text-gray-600 hover:text-primary transition-colors">
+                                        <i class="fa fa-repeat"></i>
+                                    </button>
+                                    <button class="text-gray-600 hover:text-primary transition-colors">
+                                        <i class="fa fa-random"></i>
+                                    </button>
+                                    <button class="text-gray-600 hover:text-primary transition-colors">
+                                        <i class="fa fa-list"></i>
+                                    </button>
+                                    <button class="text-gray-600 hover:text-primary transition-colors">
+                                        <i class="fa fa-expand"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 音频元素 (隐藏) -->
+                    <audio id="audio-player" src="蓝银色的海-洛天依.mp3">
+                        您的浏览器不支持音频播放
+                    </audio>
+                </div>
+            </div>
+        </section>
+
+        <!-- 歌曲详情 -->
+        <section class="py-16">
+            <div class="container mx-auto px-4 md:px-8">
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-12">
+                    <!-- 左侧信息 -->
+                    <div class="lg:col-span-1">
+                        <div class="bg-white rounded-xl shadow-sm p-6 sticky top-28 opacity-0" data-scroll-animate>
+                            <h3 class="text-lg font-semibold mb-4 pb-2 border-b border-gray-100">歌曲信息</h3>
+                            
+                            <div class="space-y-4">
+                                <div>
+                                    <p class="text-gray-500 text-sm mb-1">演唱</p>
+                                    <p>洛天依 (翻唱)</p>
+                                </div>
+                                
+                                <div>
+                                    <p class="text-gray-500 text-sm mb-1">原唱</p>
+                                    <p>张碧晨</p>
+                                </div>
+                                
+                                <div>
+                                    <p class="text-gray-500 text-sm mb-1">发行时间</p>
+                                    <p>2023.10.15</p>
+                                </div>
+                                
+                                <div>
+                                    <p class="text-gray-500 text-sm mb-1">时长</p>
+                                    <p>03:45</p>
+                                </div>
+                                
+                                <div>
+                                    <p class="text-gray-500 text-sm mb-1">格式</p>
+                                    <p>MP3 (320kbps)</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 右侧内容 -->
+                    <div class="lg:col-span-2 space-y-12">
+                        <!-- 歌曲介绍 -->
+                        <div class="bg-white rounded-xl shadow-sm p-8 opacity-0" data-scroll-animate>
+                            <h2 class="text-2xl font-bold mb-6 flex items-center">
+                                <i class="fa fa-info-circle text-primary mr-3"></i> 歌曲介绍
+                            </h2>
+                            <p class="text-gray-600 mb-4">
+                                《蓝银色的海》是由洛天依翻唱的斗罗大陆主题曲，原曲由张碧晨演唱。洛天依以其独特的嗓音重新演绎了这首作品，带来了全新的听觉体验。
+                            </p>
+                            <p class="text-gray-600">
+                                歌曲旋律优美，歌词充满热血，描绘了对美好事物的向往与追寻。洛天依的翻唱保留了原曲的韵味，同时融入了更多独特意蕴，使整首歌焕然一新。
+                            </p>
+                        </div>
+
+                        <!-- 歌词 -->
+                        <div class="bg-white rounded-xl shadow-sm p-8 opacity-0" data-scroll-animate>
+                            <h2 class="text-2xl font-bold mb-6 flex items-center">
+                                <i class="fa fa-music text-primary mr-3"></i> 歌词
+                            </h2>
+                            <div class="text-gray-600 leading-relaxed space-y-4 max-w-2xl mx-auto text-center">
+                                <p>暂无（等着更新）</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- 页脚 -->
+    <footer class="bg-dark text-white py-12">
+        <div class="container mx-auto px-4 md:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
+                <div>
+                    <div class="flex items-center mb-6">
+                        <div class="w-12 h-12 relative mr-3">
+                            <svg viewBox="0 0 100 100" class="w-full h-full">
+                                <path d="M20,20 L80,20 L80,80 L20,80 Z" fill="none" stroke="#165DFF" stroke-width="2" />
+                                <path d="M20,20 L80,80" fill="none" stroke="#165DFF" stroke-width="2" />
+                                <path d="M80,20 L20,80" fill="none" stroke="#165DFF" stroke-width="2" />
+                            </svg>
+                        </div>
+                        <h2 class="text-xl font-bold text-primary">Secg<span class="text-white">Power</span></h2>
+                    </div>
+                    <p class="text-gray-400 mb-6">专注“三年游戏，五年开发”</p>
+                </div>
+                
+                <div>
+                    <h3 class="text-lg font-semibold mb-6">快速链接</h3>
+                    <ul class="space-y-3">
+                        <li><a href="/" class="text-gray-400 hover:text-primary transition-colors duration-300">首页</a></li>
+                        <li><a href="/docs/" class="text-gray-400 hover:text-primary transition-colors duration-300">文档</a></li>
+                        <li><a href="/projects/" class="text-gray-400 hover:text-primary transition-colors duration-300">产品</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-800 pt-8 flex flex-col md:flex-row justify-between items-center">
+                <p class="text-gray-400 text-sm mb-4 md:mb-0">SecgPower 保留所有权利。</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // 导航栏滚动效果
+        const navbar = document.getElementById('navbar');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 50) {
+                navbar.classList.add('shadow-md');
+                navbar.classList.remove('py-4');
+                navbar.classList.add('py-3');
+            } else {
+                navbar.classList.remove('shadow-md');
+                navbar.classList.remove('py-3');
+                navbar.classList.add('py-4');
+            }
+        });
+
+        // 移动端菜单切换
+        const menuToggle = document.getElementById('menu-toggle');
+        const mobileMenu = document.getElementById('mobile-menu');
+        menuToggle.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        // 滚动动画
+        const scrollElements = document.querySelectorAll('[data-scroll-animate]');
+        const elementInView = (el) => {
+            const elementTop = el.getBoundingClientRect().top;
+            return elementTop <= (window.innerHeight || document.documentElement.clientHeight) / 1.25;
+        };
+
+        const displayScrollElement = (element) => {
+            element.classList.add('animate-fade-in');
+            element.classList.remove('opacity-0');
+        };
+
+        const handleScrollAnimation = () => {
+            scrollElements.forEach(el => {
+                if (elementInView(el)) displayScrollElement(el);
+            });
+        };
+
+        window.addEventListener('scroll', handleScrollAnimation);
+        // 初始化动画
+        handleScrollAnimation();
+
+        // 音频播放器功能
+        const audio = document.getElementById('audio-player');
+        const playPauseBtn = document.getElementById('play-pause-btn');
+        const playIcon = document.getElementById('play-icon');
+        const pauseIcon = document.getElementById('pause-icon');
+        const progressFill = document.getElementById('progress-fill');
+        const progressHandle = document.getElementById('progress-handle');
+        const progressBar = document.querySelector('.progress-bar');
+        const currentTimeDisplay = document.getElementById('current-time');
+        const totalTimeDisplay = document.getElementById('total-time');
+        const volumeSlider = document.querySelector('.volume-slider');
+
+        // 播放/暂停切换
+        playPauseBtn.addEventListener('click', () => {
+            if (audio.paused) {
+                audio.play();
+                playIcon.classList.add('hidden');
+                pauseIcon.classList.remove('hidden');
+            } else {
+                audio.pause();
+                pauseIcon.classList.add('hidden');
+                playIcon.classList.remove('hidden');
+            }
+        });
+
+        // 更新进度条
+        audio.addEventListener('timeupdate', () => {
+            const percent = (audio.currentTime / audio.duration) * 100;
+            progressFill.style.width = `${percent}%`;
+            progressHandle.style.left = `${percent}%`;
+            
+            // 更新当前时间显示
+            currentTimeDisplay.textContent = formatTime(audio.currentTime);
+            
+            // 当音频结束时重置播放状态
+            if (audio.ended) {
+                pauseIcon.classList.add('hidden');
+                playIcon.classList.remove('hidden');
+            }
+        });
+
+        // 音频加载完成后更新总时长
+        audio.addEventListener('loadedmetadata', () => {
+            totalTimeDisplay.textContent = formatTime(audio.duration);
+        });
+
+        // 点击进度条跳转播放位置
+        progressBar.addEventListener('click', (e) => {
+            const rect = progressBar.getBoundingClientRect();
+            const pos = (e.clientX - rect.left) / rect.width;
+            audio.currentTime = pos * audio.duration;
+        });
+
+        // 音量控制
+        volumeSlider.addEventListener('input', () => {
+            audio.volume = volumeSlider.value / 100;
+        });
+
+        // 时间格式化函数 (将秒转换为分:秒格式)
+        function formatTime(seconds) {
+            const minutes = Math.floor(seconds / 60);
+            const secs = Math.floor(seconds % 60);
+            return `${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+        }
+    </script>
+</body>
+</html>

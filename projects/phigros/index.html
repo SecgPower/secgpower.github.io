@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>项目详情 | SecgPower的个人页面</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#165DFF',
+                        secondary: '#69B1FF',
+                        dark: '#1F2937',
+                    },
+                    fontFamily: {
+                        inter: ['Inter', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .text-gradient {
+                background-clip: text;
+                -webkit-background-clip: text;
+                color: transparent;
+            }
+            .scrollbar-hide::-webkit-scrollbar {
+                display: none;
+            }
+            .scrollbar-hide {
+                -ms-overflow-style: none;
+                scrollbar-width: none;
+            }
+        }
+
+        /* 动画效果 */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-in {
+            animation: fadeIn 0.8s ease-out forwards;
+        }
+    </style>
+</head>
+<body class="font-inter text-dark bg-gray-50 scrollbar-hide">
+    <!-- 导航栏 -->
+    <header id="navbar" class="fixed w-full top-0 z-50 transition-all duration-300 py-4 bg-white shadow-md">
+        <div class="container mx-auto px-4 md:px-8 flex justify-between items-center">
+            <div class="flex items-center">
+                <div class="w-12 h-12 relative mr-3">
+                    <svg viewBox="0 0 100 100" class="w-full h-full">
+                        <path d="M20,20 L80,20 L80,80 L20,80 Z" fill="none" stroke="#165DFF" stroke-width="2"/>
+                        <path d="M20,20 L80,80" fill="none" stroke="#165DFF" stroke-width="2"/>
+                        <path d="M80,20 L20,80" fill="none" stroke="#165DFF" stroke-width="2"/>
+                    </svg>
+                </div>
+                <h1 class="text-xl font-bold text-primary">Secg<span class="text-dark">Power的个人页面</span></h1>
+            </div>
+
+            <!-- 桌面导航 -->
+            <nav class="hidden md:flex space-x-8">
+                <a href="/" class="text-dark hover:text-primary transition-colors duration-300 font-medium">首页</a>
+                <a href="/docs/" class="text-dark hover:text-primary transition-colors duration-300 font-medium">文档</a>
+                <a href="/projects/" class="text-primary border-b-2 border-primary pb-1 font-medium">产品</a>
+            </nav>
+
+            <!-- 移动端菜单按钮 -->
+            <button id="menu-toggle" class="md:hidden text-dark focus:outline-none">
+                <i class="fa fa-bars text-2xl"></i>
+            </button>
+        </div>
+
+        <!-- 移动端导航菜单 -->
+        <div id="mobile-menu" class="hidden md:hidden bg-white shadow-lg absolute w-full py-4 px-4">
+            <nav class="flex flex-col space-y-4">
+                <a href="/" class="text-dark hover:text-primary transition-colors duration-300 font-medium py-2 border-b border-gray-100">首页</a>
+                <a href="/docs/" class="text-dark hover:text-primary transition-colors duration-300 font-medium py-2 border-b border-gray-100">文档</a>
+                <a href="/projects/" class="text-primary font-medium py-2">产品</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- 主内容区 -->
+    <main class="pt-28 pb-16">
+        <!-- 项目头部 -->
+        <section class="bg-white py-12 md:py-20">
+            <div class="container mx-auto px-4 md:px-8">
+                <div class="flex flex-col md:flex-row md:items-center justify-between mb-12 opacity-0" data-scroll-animate>
+                    <div>
+                        <h1 class="text-[clamp(1.8rem,4vw,2.5rem)] font-bold mb-4">音乐节奏游戏: Phigros</h1>
+                        <p class="text-gray-600 max-w-2xl">一款拥有精美插画与高难度谱面的音乐节奏游戏</p>
+                    </div>
+                    <div class="mt-6 md:mt-0 flex space-x-4">
+                        <a href="https://www.taptap.cn/app/165287" class="bg-primary hover:bg-primary/90 text-white px-6 py-3 rounded-lg transition-colors duration-300 flex items-center">
+                            <i class="fa fa-download mr-2"></i> 游戏下载
+                        </a>
+                        <a href="https://pgrfm.miraheze.org/wiki/Re:PhiEdit" class="bg-gray-100 hover:bg-gray-200 text-dark px-6 py-3 rounded-lg transition-colors duration-300 flex items-center">
+                            <i class="fa fa-download mr-2"></i> 制谱器下载
+                        </a>
+                    </div>
+                </div>
+
+                <!-- 游戏截图 
+                <div class="rounded-xl overflow-hidden shadow-lg opacity-0" data-scroll-animate>
+                    <img src="/img/phigros.png" alt="Phigros游戏截图" class="w-full h-auto">
+                </div>-->
+            </div>
+        </section>
+
+        <!-- 项目详情 -->
+        <section class="py-16">
+            <div class="container mx-auto px-4 md:px-8">
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-12">
+                    <!-- 左侧信息 -->
+                    <div class="lg:col-span-1">
+                        <div class="bg-white rounded-xl shadow-sm p-6 sticky top-28 opacity-0" data-scroll-animate>
+                            <h3 class="text-lg font-semibold mb-4 pb-2 border-b border-gray-100">项目信息</h3>
+                            
+                            <div class="space-y-4">
+                                <div>
+                                    <p class="text-gray-500 text-sm mb-1">支持平台</p>
+                                    <div class="flex flex-wrap gap-2 mt-2">
+                                        <span class="px-3 py-1 bg-primary/10 text-primary rounded-full text-sm">IPAD</span>
+                                        <span class="px-3 py-1 bg-primary/10 text-primary rounded-full text-sm">Android</span>
+                                        <span class="px-3 py-1 bg-primary/10 text-primary rounded-full text-sm">iOS</span>
+                                    </div>
+                                </div>
+                                
+                                <div>
+                                    <p class="text-gray-500 text-sm mb-1">状态</p>
+                                    <p class="text-green-500 flex items-center">
+                                        <i class="fa fa-check-circle mr-2"></i> 持续更新中
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 右侧内容 -->
+                    <div class="lg:col-span-2 space-y-12">
+                        <!-- 游戏介绍 -->
+                        <div class="bg-white rounded-xl shadow-sm p-8 opacity-0" data-scroll-animate>
+                            <h2 class="text-2xl font-bold mb-6 flex items-center">
+                                <i class="fa fa-info-circle text-primary mr-3"></i> 游戏介绍
+                            </h2>
+                            <p class="text-gray-600 mb-4">
+                                Phigros是一款音乐节奏游戏，结合了独特的判定线玩法与精美的视觉效果。游戏采用四键下落式玩法，通过点击、滑动等操作跟随音乐节奏获得高分。
+                            </p>
+                            <p class="text-gray-600 mb-4">
+                                游戏收录了来自全球各地创作者的音乐作品，涵盖电子、摇滚、古典等多种风格。每个曲目都配有精心设计的谱面和原创插画，为玩家带来沉浸式的音乐体验。
+                            </p>
+                            <p class="text-gray-600">
+                                随着游戏进程推进，玩家可以解锁更多高难度曲目和隐藏内容，挑战自己的反应速度和节奏感。
+                            </p>
+                        </div>
+
+                        <!-- 游戏特点 -->
+                        <div class="bg-white rounded-xl shadow-sm p-8 opacity-0" data-scroll-animate>
+                            <h2 class="text-2xl font-bold mb-6 flex items-center">
+                                <i class="fa fa-star text-primary mr-3"></i> 游戏特点
+                            </h2>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div class="flex">
+                                    <div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center mr-4 mt-1 flex-shrink-0">
+                                        <i class="fa fa-music text-primary"></i>
+                                    </div>
+                                    <div>
+                                        <h3 class="font-semibold mb-2">丰富曲库</h3>
+                                        <p class="text-gray-600 text-sm">超百首精选音乐，涵盖多种风格，定期更新</p>
+                                    </div>
+                                </div>
+                                
+                                <div class="flex">
+                                    <div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center mr-4 mt-1 flex-shrink-0">
+                                        <i class="fa fa-line-chart text-primary"></i>
+                                    </div>
+                                    <div>
+                                        <h3 class="font-semibold mb-2">多级难度</h3>
+                                        <p class="text-gray-600 text-sm">每首曲目包含多个难度等级，从EZ到AT</p>
+                                    </div>
+                                </div>
+                                
+                                <div class="flex">
+                                    <div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center mr-4 mt-1 flex-shrink-0">
+                                        <i class="fa fa-paint-brush text-primary"></i>
+                                    </div>
+                                    <div>
+                                        <h3 class="font-semibold mb-2">视觉体验</h3>
+                                        <p class="text-gray-600 text-sm">每首歌曲配有独特插画和动态视觉效果</p>
+                                    </div>
+                                </div>
+                                
+                                <div class="flex">
+                                    <div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center mr-4 mt-1 flex-shrink-0">
+                                        <i class="fa fa-users text-primary"></i>
+                                    </div>
+                                    <div>
+                                        <a href="https://phira.moe/"><h3 class="font-semibold mb-2">Phira社区</h3></a>
+                                        <p class="text-gray-600 text-sm">支持玩家自制谱面分享，参与全球排行榜竞争</p>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <!-- 相关资源 -->
+                        <div class="bg-white rounded-xl shadow-sm p-8 opacity-0" data-scroll-animate>
+                            <h2 class="text-2xl font-bold mb-6 flex items-center">
+                                <i class="fa fa-download text-primary mr-3"></i> 相关资源
+                            </h2>
+                            <div class="space-y-6 text-gray-600">
+                                <div class="p-4 border border-gray-100 rounded-lg hover:bg-gray-50 transition-colors duration-300">
+                                    <h3 class="font-semibold text-lg mb-2 flex items-center">
+                                        <i class="fa fa-gamepad text-primary mr-2"></i> 游戏客户端
+                                    </h3>
+                                    <p class="mb-3">适用于不同平台的最新版本客户端，包含基础曲库</p>
+                                    <div class="flex flex-wrap gap-3">
+                                        <a href="https://www.taptap.cn/app/165287" class="inline-flex items-center px-4 py-2 bg-primary/10 text-primary rounded-lg hover:bg-primary/20 transition-colors">
+                                            <i class="fa fa-android mr-2"></i> Android
+                                        </a>
+                                        <a href="https://apps.apple.com/app/phigros/id1454809109" class="inline-flex items-center px-4 py-2 bg-primary/10 text-primary rounded-lg hover:bg-primary/20 transition-colors">
+                                            <i class="fa fa-apple mr-2"></i> iOS
+                                        </a>
+                                        <a href="https://phitogether.fun/" class="inline-flex items-center px-4 py-2 bg-primary/10 text-primary rounded-lg hover:bg-primary/20 transition-colors">
+                                            <i class="fa fa-link mr-2"></i> Web
+                                        </a>
+                                    </div>
+                                </div>
+                                
+                                <div class="p-4 border border-gray-100 rounded-lg hover:bg-gray-50 transition-colors duration-300">
+                                    <h3 class="font-semibold text-lg mb-2 flex items-center">
+                                        <i class="fa fa-music text-primary mr-2"></i> 制谱工具
+                                    </h3>
+                                    <p class="mb-3">官方制谱器及教程，支持创作和分享自定义谱面</p>
+                                    <a href="https://pgrfm.miraheze.org/wiki/Re:PhiEdit" class="inline-flex items-center px-4 py-2 bg-primary/10 text-primary rounded-lg hover:bg-primary/20 transition-colors">
+                                        <i class="fa fa-download mr-2"></i> RE:PhiEdit
+                                    </a>
+                                </div>
+                                
+                                <div class="p-4 border border-gray-100 rounded-lg hover:bg-gray-50 transition-colors duration-300">
+                                    <h3 class="font-semibold text-lg mb-2 flex items-center">
+                                        <i class="fa fa-file-archive-o text-primary mr-2"></i> 播放器
+                                    </h3>
+                                    <p class="mb-3">Phigros播放模拟器</p>Github仓库：
+                                    <div class="flex flex-wrap gap-3">
+                                    
+                                        <a href="https://pgrfm.miraheze.org/wiki/Prpr" class="inline-flex items-center px-4 py-2 bg-primary/10 text-primary rounded-lg hover:bg-primary/20 transition-colors">
+                                            <i class="fa fa-music mr-2"></i> prpr
+                                        </a>
+                                    </div>
+                                    在线播放：
+                                    <div class="flex flex-wrap gap-3">
+                                        <a href="https://kev1nweng.gitlab.io/phisim-newui/" class="inline-flex items-center px-4 py-2 bg-primary/10 text-primary rounded-lg hover:bg-primary/20 transition-colors">
+                                            <i class="fa fa-link mr-2"></i> Phisim
+                                        </a>
+                                        <a href="PhiPlayer.html" class="inline-flex items-center px-4 py-2 bg-primary/10 text-primary rounded-lg hover:bg-primary/20 transition-colors">
+                                            <i class="fa fa-headphones mr-2"></i> PhiPlayer
+                                        </a>
+                                        <a href="ScrPhigros.html" class="inline-flex items-center px-4 py-2 bg-primary/10 text-primary rounded-lg hover:bg-primary/20 transition-colors">
+                                            <i class="fa fa-headphones mr-2"></i> ScrPhigros
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- 页脚 -->
+    <footer class="bg-dark text-white py-12">
+        <div class="container mx-auto px-4 md:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
+                <div>
+                    <div class="flex items-center mb-6">
+                        <div class="w-12 h-12 relative mr-3">
+                            <svg viewBox="0 0 100 100" class="w-full h-full">
+                                <path d="M20,20 L80,20 L80,80 L20,80 Z" fill="none" stroke="#165DFF" stroke-width="2" />
+                                <path d="M20,20 L80,80" fill="none" stroke="#165DFF" stroke-width="2" />
+                                <path d="M80,20 L20,80" fill="none" stroke="#165DFF" stroke-width="2" />
+                            </svg>
+                        </div>
+                        <h2 class="text-xl font-bold text-primary">Secg<span class="text-white">Power</span></h2>
+                    </div>
+                    <p class="text-gray-400 mb-6">专注“三年游戏，五年开发”</p>
+                </div>
+                
+                <div>
+                    <h3 class="text-lg font-semibold mb-6">快速链接</h3>
+                    <ul class="space-y-3">
+                        <li><a href="/" class="text-gray-400 hover:text-primary transition-colors duration-300">首页</a></li>
+                        <li><a href="/docs/" class="text-gray-400 hover:text-primary transition-colors duration-300">文档</a></li>
+                        <li><a href="/projects/" class="text-gray-400 hover:text-primary transition-colors duration-300">产品</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-800 pt-8 flex flex-col md:flex-row justify-between items-center">
+                <p class="text-gray-400 text-sm mb-4 md:mb-0">SecgPower 保留所有权利。</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // 导航栏滚动效果
+        const navbar = document.getElementById('navbar');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 50) {
+                navbar.classList.add('shadow-md');
+                navbar.classList.remove('py-4');
+                navbar.classList.add('py-3');
+            } else {
+                navbar.classList.remove('shadow-md');
+                navbar.classList.remove('py-3');
+                navbar.classList.add('py-4');
+            }
+        });
+
+        // 移动端菜单切换
+        const menuToggle = document.getElementById('menu-toggle');
+        const mobileMenu = document.getElementById('mobile-menu');
+        menuToggle.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        // 滚动动画
+        const scrollElements = document.querySelectorAll('[data-scroll-animate]');
+        const elementInView = (el) => {
+            const elementTop = el.getBoundingClientRect().top;
+            return elementTop <= (window.innerHeight || document.documentElement.clientHeight) / 1.25;
+        };
+
+        const displayScrollElement = (element) => {
+            element.classList.add('animate-fade-in');
+            element.classList.remove('opacity-0');
+        };
+
+        const handleScrollAnimation = () => {
+            scrollElements.forEach(el => {
+                if (elementInView(el)) displayScrollElement(el);
+            });
+        };
+
+        window.addEventListener('scroll', handleScrollAnimation);
+        // 初始化动画
+        handleScrollAnimation();
+    </script>
+</body>
+</html>
