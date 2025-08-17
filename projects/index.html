@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>所有作品 | SecgPower的项目中心</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+        }
+        .animate-fade-in {
+            animation: fadeIn 0.8s ease-out forwards;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#165DFF',
+                        secondary: '#69B1FF',
+                        dark: '#1F2937',
+                    },
+                    fontFamily: {
+                        inter: ['Inter', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+</head>
+<body class="font-inter text-dark bg-gray-50">
+    <!-- 导航栏 -->
+    <header id="navbar" class="fixed w-full top-0 z-50 bg-white shadow-md py-3">
+        <div class="container mx-auto px-4 md:px-8 flex justify-between items-center">
+            <div class="flex items-center">
+                <div class="w-12 h-12 relative mr-3">
+                    <svg viewBox="0 0 100 100" class="w-full h-full">
+                        <path d="M20,20 L80,20 L80,80 L20,80 Z" fill="none" stroke="#165DFF" stroke-width="2"/>
+                        <path d="M20,20 L80,80" fill="none" stroke="#165DFF" stroke-width="2"/>
+                        <path d="M80,20 L20,80" fill="none" stroke="#165DFF" stroke-width="2"/>
+                    </svg>
+                </div>
+                <h1 class="text-xl md:text-2xl font-bold text-primary">Secg<span class="text-dark">Power的个人页面</span></h1>
+            </div>
+            <nav class="hidden md:flex space-x-8">
+                <a href="/" class="text-dark hover:text-primary transition-colors duration-300">首页</a>
+                <a href="/docs/" class="text-dark hover:text-primary transition-colors duration-300">文档</a>
+                <a href="/projects/" class="text-primary font-medium">产品</a>
+            </nav>
+            <button id="menu-toggle" class="md:hidden text-dark focus:outline-none">
+                <i class="fa fa-bars text-2xl"></i>
+            </button>
+        </div>
+        <div id="mobile-menu" class="hidden md:hidden bg-white shadow-lg absolute w-full py-4 px-4">
+            <nav class="flex flex-col space-y-4">
+                <a href="/" class="text-dark hover:text-primary transition-colors duration-300 py-2 border-b border-gray-100">首页</a>
+                <a href="/docs/" class="text-dark hover:text-primary transition-colors duration-300 py-2 border-b border-gray-100">文档</a>
+                <a href="/projects/" class="text-primary py-2">产品</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- 主要内容 -->
+    <main class="container mx-auto px-4 md:px-8 pt-32 pb-20">
+        <div class="max-w-6xl mx-auto">
+            <!-- 标题区 -->
+            <div class="text-center mb-16 opacity-0" data-scroll-animate>
+                <h2 class="text-[clamp(2rem,4vw,3rem)] font-bold mb-4">所有<span class="text-primary">作品</span></h2>
+                <p class="text-gray-600 max-w-2xl mx-auto">探索我的全部项目作品，包含应用程序、游戏开发等多个领域</p>
+            </div>
+
+            <!-- 筛选器 -->
+            <div class="flex flex-wrap justify-center gap-4 mb-12 opacity-0" data-scroll-animate>
+                <button class="filter-btn active px-6 py-2 rounded-full bg-primary text-white transition-all duration-300" data-filter="all">全部</button>
+                <button class="filter-btn px-6 py-2 rounded-full bg-gray-100 text-gray-600 hover:bg-primary/10 transition-all duration-300" data-filter="app">应用程序</button>
+                <button class="filter-btn px-6 py-2 rounded-full bg-gray-100 text-gray-600 hover:bg-primary/10 transition-all duration-300" data-filter="games">游戏开发</button>
+                <button class="filter-btn px-6 py-2 rounded-full bg-gray-100 text-gray-600 hover:bg-primary/10 transition-all duration-300" data-filter="music">音乐/美术</button>
+            </div>
+
+            <!-- 作品网格 -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- 应用程序 1 -->
+                <div class="work-item opacity-0" data-category="app" data-scroll-animate>
+                    <div class="relative overflow-hidden rounded-xl group bg-white shadow-sm">
+                        <div class="h-56 overflow-hidden">
+                            <img src="img/app1.png" alt="多媒体播放器" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+                        </div>
+                        <div class="p-6">
+                            <div class="flex items-center mb-3">
+                                <span class="px-2 py-1 bg-primary/10 text-primary text-xs rounded-full">应用程序</span>
+                            </div>
+                            <h3 class="text-xl font-semibold mb-2">多媒体播放器</h3>
+                            <p class="text-gray-600 text-sm mb-4">基于Web技术开发的多功能媒体播放器，支持多种格式解析与自定义皮肤</p>
+                            <a href="/projects/tw/34p/34p.html" class="text-primary hover:text-secondary transition-colors inline-flex items-center text-sm">
+                                查看详情 <i class="fa fa-arrow-right ml-1"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 游戏开发 1 -->
+                <div class="work-item opacity-0" data-category="games" data-scroll-animate>
+                    <div class="relative overflow-hidden rounded-xl group bg-white shadow-sm">
+                        <div class="h-56 overflow-hidden">
+                            <img src="img/game1.png" alt="Phigros相关项目" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+                        </div>
+                        <div class="p-6">
+                            <div class="flex items-center mb-3">
+                                <span class="px-2 py-1 bg-primary/10 text-primary text-xs rounded-full">游戏开发</span>
+                            </div>
+                            <h3 class="text-xl font-semibold mb-2">Phigros屁股肉</h3>
+                            <p class="text-gray-600 text-sm mb-4">谱面编辑器与各种模拟器，以及一些资源包</p>
+                            <a href="/projects/phigros/" class="text-primary hover:text-secondary transition-colors inline-flex items-center text-sm">
+                                查看详情 <i class="fa fa-arrow-right ml-1"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 音乐/美术 1 -->
+                <div class="work-item opacity-0" data-category="music" data-scroll-animate>
+                    <div class="relative overflow-hidden rounded-xl group bg-white shadow-sm">
+                        <div class="h-56 overflow-hidden">
+                            <img src="img/music1.png" alt="《蓝银色的海》" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+                        </div>
+                        <div class="p-6">
+                            <div class="flex items-center mb-3">
+                                <span class="px-2 py-1 bg-primary/10 text-primary text-xs rounded-full">音乐/美术</span>
+                            </div>
+                            <h3 class="text-xl font-semibold mb-2">《蓝银色的海》-洛天依</h3>
+                            <p class="text-gray-600 text-sm mb-4">有没有兴趣听听洛天依唱蓝银色的海？</p>
+                            <a href="/projects/music/1.html" class="text-primary hover:text-secondary transition-colors inline-flex items-center text-sm">
+                                查看详情 <i class="fa fa-arrow-right ml-1"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 应用程序 2 -->
+                <div class="work-item opacity-0" data-category="app" data-scroll-animate>
+                    <div class="relative overflow-hidden rounded-xl group bg-white shadow-sm">
+                        <div class="h-56 overflow-hidden">
+                            <img src="img/app2.png" alt="代码转换工具" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+                        </div>
+                        <div class="p-6">
+                            <div class="flex items-center mb-3">
+                                <span class="px-2 py-1 bg-primary/10 text-primary text-xs rounded-full">应用程序</span>
+                            </div>
+                            <h3 class="text-xl font-semibold mb-2">代码转换工具</h3>
+                            <p class="text-gray-600 text-sm mb-4">多种语言转exe应用程序</p>
+                            <a href="/projects/apps/converter.html" class="text-primary hover:text-secondary transition-colors inline-flex items-center text-sm">
+                                查看详情 <i class="fa fa-arrow-right ml-1"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- 页脚 -->
+    <footer class="bg-dark text-white py-12">
+        <div class="container mx-auto px-4 md:px-8">
+            <div class="text-center">
+                <p class="text-gray-400 text-sm">© GitHub Page 保留所有权利。</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // 移动端菜单切换
+        const menuToggle = document.getElementById('menu-toggle');
+        const mobileMenu = document.getElementById('mobile-menu');
+        menuToggle.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        // 作品筛选
+        const filterButtons = document.querySelectorAll('.filter-btn');
+        const workItems = document.querySelectorAll('.work-item');
+
+        filterButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                // 更新按钮样式
+                filterButtons.forEach(btn => {
+                    btn.classList.remove('active', 'bg-primary', 'text-white');
+                    btn.classList.add('bg-gray-100', 'text-gray-600');
+                });
+                button.classList.add('active', 'bg-primary', 'text-white');
+                button.classList.remove('bg-gray-100', 'text-gray-600');
+
+                // 筛选作品
+                const filter = button.getAttribute('data-filter');
+                workItems.forEach(item => {
+                    if (filter === 'all' || item.getAttribute('data-category') === filter) {
+                        item.style.display = 'block';
+                        setTimeout(() => {
+                            item.classList.remove('opacity-0');
+                            item.classList.add('opacity-100', 'animate-fade-in');
+                        }, 50);
+                    } else {
+                        item.classList.remove('opacity-100', 'animate-fade-in');
+                        item.classList.add('opacity-0');
+                        setTimeout(() => {
+                            item.style.display = 'none';
+                        }, 300);
+                    }
+                });
+            });
+        });
+
+        // 滚动动画
+        const scrollElements = document.querySelectorAll('[data-scroll-animate]');
+        const elementInView = (el) => {
+            const elementTop = el.getBoundingClientRect().top;
+            return elementTop <= (window.innerHeight || document.documentElement.clientHeight) / 1.25;
+        };
+
+        const displayScrollElement = (element) => {
+            element.classList.add('animate-fade-in');
+            element.classList.remove('opacity-0');
+        };
+
+        const handleScrollAnimation = () => {
+            scrollElements.forEach(el => {
+                if (elementInView(el)) displayScrollElement(el);
+            });
+        };
+
+        window.addEventListener('scroll', handleScrollAnimation);
+        handleScrollAnimation(); // 初始检查
+    </script>
+</body>
+</html>

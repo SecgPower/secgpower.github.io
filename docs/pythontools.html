@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Python开发工具 | 文档中心</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#165DFF',
+                        secondary: '#69B1FF',
+                        dark: '#1F2937',
+                    },
+                    fontFamily: {
+                        inter: ['Inter', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .text-gradient {
+                background-clip: text;
+                -webkit-background-clip: text;
+                color: transparent;
+            }
+            .scrollbar-hide::-webkit-scrollbar {
+                display: none;
+            }
+            .scrollbar-hide {
+                -ms-overflow-style: none;
+                scrollbar-width: none;
+            }
+            .doc-nav-active {
+                @apply bg-primary/10 text-primary border-l-4 border-primary;
+            }
+        }
+
+        /* 动画效果 */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-in {
+            animation: fadeIn 0.8s ease-out forwards;
+        }
+
+        /* 代码块样式 */
+        pre {
+            background-color: #f8fafc;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            overflow-x: auto;
+            font-family: monospace;
+            margin: 1rem 0;
+        }
+        code {
+            font-family: monospace;
+            background-color: #f1f5f9;
+            padding: 0.2rem 0.4rem;
+            border-radius: 0.25rem;
+        }
+    </style>
+</head>
+<body class="font-inter text-dark bg-gray-50 scrollbar-hide">
+    <!-- 导航栏 -->
+    <header id="navbar" class="fixed w-full top-0 z-50 transition-all duration-300 py-4 bg-white shadow-md">
+        <div class="container mx-auto px-4 md:px-8 flex justify-between items-center">
+            <div class="flex items-center">
+                <div class="w-12 h-12 relative mr-3">
+                    <svg viewBox="0 0 100 100" class="w-full h-full">
+                        <path d="M20,20 L80,20 L80,80 L20,80 Z" fill="none" stroke="#165DFF" stroke-width="2"/>
+                        <path d="M20,20 L80,80" fill="none" stroke="#165DFF" stroke-width="2"/>
+                        <path d="M80,20 L20,80" fill="none" stroke="#165DFF" stroke-width="2"/>
+                    </svg>
+                </div>
+                <h1 class="text-xl font-bold text-primary">Secg<span class="text-dark">Power的个人页面</span></h1>
+            </div>
+
+            <!-- 桌面导航 -->
+            <nav class="hidden md:flex space-x-8">
+                <a href="/" class="text-dark hover:text-primary transition-colors duration-300 font-medium">首页</a>
+                <a href="/docs/" class="text-primary border-b-2 border-primary pb-1 font-medium">文档</a>
+                <a href="/projects/" class="text-dark hover:text-primary transition-colors duration-300 font-medium">产品</a>
+            </nav>
+
+            <!-- 移动端菜单按钮 -->
+            <button id="menu-toggle" class="md:hidden text-dark focus:outline-none">
+                <i class="fa fa-bars text-2xl"></i>
+            </button>
+        </div>
+
+        <!-- 移动端导航菜单 -->
+        <div id="mobile-menu" class="hidden md:hidden bg-white shadow-lg absolute w-full py-4 px-4">
+            <nav class="flex flex-col space-y-4">
+                <a href="/" class="text-dark hover:text-primary transition-colors duration-300 font-medium py-2 border-b border-gray-100">首页</a>
+                <a href="/docs/" class="text-primary font-medium py-2 border-b border-gray-100">文档</a>
+                <a href="/projects/" class="text-dark hover:text-primary transition-colors duration-300 font-medium py-2">产品</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- 主内容区 -->
+    <main class="pt-28 pb-16">
+        <!-- 面包屑导航 -->
+        <div class="container mx-auto px-4 md:px-8 mb-8">
+            <div class="text-sm text-gray-500 opacity-0" data-scroll-animate>
+                <a href="/" class="hover:text-primary">首页</a>
+                <span class="mx-2"><i class="fa fa-angle-right"></i></span>
+                <a href="/docs/" class="hover:text-primary">文档中心</a>
+                <span class="mx-2"><i class="fa fa-angle-right"></i></span>
+                <a href="/docs/tools-all" class="hover:text-primary">开发工具</a>
+                <span class="mx-2"><i class="fa fa-angle-right"></i></span>
+                <span class="text-dark">Python开发</span>
+            </div>
+        </div>
+
+        <div class="container mx-auto px-4 md:px-8">
+            <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
+                <!-- 文档侧边栏 -->
+                <div class="lg:col-span-1">
+                    <div class="bg-white rounded-xl shadow-sm p-6 sticky top-28 h-fit opacity-0" data-scroll-animate>
+                        <h3 class="text-lg font-semibold mb-4 pb-2 border-b border-gray-100">文档目录</h3>
+                        
+                        <ul class="space-y-1">
+                            <li>
+                                <a href="#intro" class="block px-3 py-2 rounded hover:bg-gray-100 transition-colors doc-nav-active">
+                                    简介
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#install" class="block px-3 py-2 rounded hover:bg-gray-100 transition-colors">
+                                    环境安装
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#environment" class="block px-3 py-2 rounded hover:bg-gray-100 transition-colors">
+                                    开发环境
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#basic" class="block px-3 py-2 rounded hover:bg-gray-100 transition-colors">
+                                    基础语法
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#example" class="block px-3 py-2 rounded hover:bg-gray-100 transition-colors">
+                                    示例代码
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#tools" class="block px-3 py-2 rounded hover:bg-gray-100 transition-colors">
+                                    常用工具
+                                </a>
+                            </li>
+                        </ul>
+                        
+                        <div class="mt-8 pt-6 border-t border-gray-100">
+                            <h4 class="font-medium mb-3">其他文档</h4>
+                            <ul class="space-y-2 text-sm">
+                                <li>
+                                    <a href="/docs/codeconvert.html" class="text-gray-600 hover:text-primary transition-colors flex items-center">
+                                        <i class="fa fa-angle-right mr-2 text-primary"></i> 代码转换工具
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/docs/debug.html" class="text-gray-600 hover:text-primary transition-colors flex items-center">
+                                        <i class="fa fa-angle-right mr-2 text-primary"></i> 调试工具指南
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 文档内容 -->
+                <div class="lg:col-span-3 space-y-10">
+                    <div class="bg-white rounded-xl shadow-sm p-8 opacity-0" data-scroll-animate>
+                        <h1 class="text-[clamp(1.8rem,4vw,2.5rem)] font-bold mb-6">Python开发工具指南</h1>
+                        <p class="text-gray-600 text-lg">
+                            本文档介绍Python开发的常用工具、环境配置及实用技巧，适合初学者快速上手。
+                        </p>
+                    </div>
+
+                    <!-- 简介部分 -->
+                    <div id="intro" class="bg-white rounded-xl shadow-sm p-8 opacity-0" data-scroll-animate>
+                        <h2 class="text-2xl font-bold mb-6 flex items-center">
+                            <i class="fa fa-info-circle text-primary mr-3"></i> 简介
+                        </h2>
+                        <p class="text-gray-600 mb-4">
+                            Python 是由荷兰程序员吉多・范罗苏姆于 1989 年圣诞节期间设计的编程语言，其诞生源于对复杂语法的反叛，核心哲学是 “优雅、明确、简单”。它用缩进替代繁琐的括号，语法接近自然语言，比如 “if...else...”“for...in...” 等结构直观易懂，极大降低了入门门槛，成为编程新手的首选语言之一。
+                        </p>
+                        <p class="text-gray-600 mb-4">
+                            Python 的应用场景极为广泛：在 Web 开发领域，Django 和 Flask 框架能快速搭建网站；数据分析中，Pandas 和 NumPy 是处理数据的利器；人工智能与机器学习领域，TensorFlow、PyTorch 等库依赖 Python 实现算法；此外，它还用于自动化脚本、游戏开发、科学计算等。
+                        </p>
+                        <p class="text-gray-600">
+                            庞大的社区支持让 Python 拥有海量第三方库，开发者无需重复造轮子，能专注于问题解决。这种高效性与易用性的结合，使 Python 连续多年稳居编程语言 popularity 榜单前列，成为跨领域开发者的必备技能。
+                        </p>
+                    </div>
+
+                    <!-- 环境安装 -->
+                    <div id="install" class="bg-white rounded-xl shadow-sm p-8 opacity-0" data-scroll-animate>
+                        <h2 class="text-2xl font-bold mb-6 flex items-center">
+                            <i class="fa fa-download text-primary mr-3"></i> 环境安装
+                        </h2>
+                        
+                        <div class="space-y-6">
+                            <div>
+                                <h3 class="font-semibold text-lg mb-3">Windows系统</h3>
+                                <ol class="list-decimal pl-5 space-y-3 text-gray-600">
+                                下载链接：<a href="https://www.python.org/downloads/" class="text-primary hover:underline">Python官网</a>&nbsp;|
+                                <a href="https://www.anaconda.com/download" class="text-primary hover:underline">Anaconda官网</a>
+                                    <li>访问官网下载对应版本的安装包</li>
+                                    <li>运行安装包，勾选"Add Python to PATH"选项</li>
+                                    <li>点击"Install Now"完成安装</li>
+                                    <li>打开命令提示符，输入<code>python --version</code>验证安装</li>
+                                </ol>
+                            </div>
+                            
+                            <div>
+                                <h3 class="font-semibold text-lg mb-3">macOS系统</h3>
+                                <ol class="list-decimal pl-5 space-y-3 text-gray-600">
+                                    <li>推荐使用Homebrew安装：<code>brew install python3</code></li>
+                                    <li>或从官网下载 pkg 安装包进行安装</li>
+                                    <li>验证安装：<code>python3 --version</code></li>
+                                </ol>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!--开发环境配置-->
+                    <div id="environment" class="bg-white rounded-xl shadow-sm p-8 opacity-0" data-scroll-animate>
+                        <h2 class="text-2xl font-bold mb-6 flex items-center">
+                            <i class="fa fa-download text-primary mr-3"></i> 开发环境
+                        </h2>
+                        
+                        <div class="space-y-6">
+                            <div>
+                                <h3 class="font-semibold text-lg mb-3">Windows系统</h3>
+                                <ol class="list-decimal pl-5 space-y-3 text-gray-600">
+                                下载链接：<a href="https://code.visualstudio.com/Download" class="text-primary hover:underline">VSCode官网</a>（其他系统官网也有）
+                                    <li>访问官网下载对应版本的安装包</li>
+                                    <li>运行安装包，不用我说了吧</li>
+                                    <li>运行VSCode，打开拓展，搜索“Python”，搜出来第一个就是，点击安装，按步骤一个一个完成就行</li>
+                                </ol>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 基础语法 -->
+                    <div id="basic" class="bg-white rounded-xl shadow-sm p-8 opacity-0" data-scroll-animate>
+                        <h2 class="text-2xl font-bold mb-6 flex items-center">
+                            <i class="fa fa-code text-primary mr-3"></i> 基础语法
+                        </h2>
+                        
+                        <div class="space-y-6 text-gray-600">
+                            <div>
+                                <h3 class="font-semibold text-lg mb-3">变量与数据类型</h3>
+                                <pre><code># 整数
+age = 25
+
+# 字符串
+name = "SecgPower"
+
+# 列表
+fruits = ["apple", "banana", "cherry"]
+
+# 字典
+person = {"name": "John", "age": 30}</code></pre>
+                            </div>
+                            
+                            <div>
+                                <h3 class="font-semibold text-lg mb-3">条件语句</h3>
+                                <pre><code>score = 85
+
+if score >= 90:
+    print("优秀")
+elif score >= 70:
+    print("良好")
+else:
+    print("继续努力")</code></pre>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 示例代码 -->
+                    <div id="example" class="bg-white rounded-xl shadow-sm p-8 opacity-0" data-scroll-animate>
+                        <h2 class="text-2xl font-bold mb-6 flex items-center">
+                            <i class="fa fa-file-code-o text-primary mr-3"></i> 示例代码
+                        </h2>
+                        
+                        <div class="bg-gray-50 p-6 rounded-lg border border-gray-100">
+                            <h3 class="font-semibold text-lg mb-3">简单的Web服务器</h3>
+                            <pre><code>from http.server import HTTPServer, BaseHTTPRequestHandler
+
+class SimpleHandler(BaseHTTPRequestHandler):
+    def do_GET(self):
+        self.send_response(200)
+        self.send_header('Content-type', 'text/html')
+        self.end_headers()
+        self.wfile.write(b"Hello, Python Web Server!")
+
+if __name__ == '__main__':
+    server_address = ('', 8000)
+    httpd = HTTPServer(server_address, SimpleHandler)
+    print("Server running on port 8000...")
+    httpd.serve_forever()</code></pre>
+                            <p class="text-sm text-gray-500 mt-3">
+                                运行以上代码后，访问 http://localhost:8000 即可看到效果
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- 常用工具 -->
+                    <div id="tools" class="bg-white rounded-xl shadow-sm p-8 opacity-0" data-scroll-animate>
+                        <h2 class="text-2xl font-bold mb-6 flex items-center">
+                            <i class="fa fa-wrench text-primary mr-3"></i> 常用工具
+                        </h2>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="border border-gray-100 rounded-lg p-5 hover:shadow-md transition-shadow">
+                                <div class="flex items-center mb-4">
+                                    <div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center mr-3">
+                                        <i class="fa fa-pencil text-primary"></i>
+                                    </div>
+                                    <h3 class="font-semibold">PyCharm</h3>
+                                </div>
+                                <p class="text-gray-600 text-sm">
+                                    功能强大的Python IDE，支持代码补全、调试、版本控制等功能，适合大型项目开发。
+                                </p>
+                            </div>
+                            
+                            <div class="border border-gray-100 rounded-lg p-5 hover:shadow-md transition-shadow">
+                                <div class="flex items-center mb-4">
+                                    <div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center mr-3">
+                                        <i class="fa fa-terminal text-primary"></i>
+                                    </div>
+                                    <h3 class="font-semibold">Jupyter Notebook</h3>
+                                </div>
+                                <p class="text-gray-600 text-sm">
+                                    交互式笔记本，适合数据分析和可视化，支持实时运行代码并展示结果。
+                                </p>
+                            </div>
+                            
+                            <div class="border border-gray-100 rounded-lg p-5 hover:shadow-md transition-shadow">
+                                <div class="flex items-center mb-4">
+                                    <div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center mr-3">
+                                        <i class="fa fa-cubes text-primary"></i>
+                                    </div>
+                                    <h3 class="font-semibold">pip</h3>
+                                </div>
+                                <p class="text-gray-600 text-sm">
+                                    Python包管理工具，用于安装和管理第三方库，简单易用。
+                                </p>
+                            </div>
+                            
+                            <div class="border border-gray-100 rounded-lg p-5 hover:shadow-md transition-shadow">
+                                <div class="flex items-center mb-4">
+                                    <div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center mr-3">
+                                        <i class="fa fa-code-fork text-primary"></i>
+                                    </div>
+                                    <h3 class="font-semibold">virtualenv</h3>
+                                </div>
+                                <p class="text-gray-600 text-sm">
+                                    虚拟环境管理工具，用于隔离不同项目的依赖，避免版本冲突。
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- 页脚 -->
+    <footer class="bg-dark text-white py-12">
+        <div class="container mx-auto px-4 md:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
+                <div>
+                    <div class="flex items-center mb-6">
+                        <div class="w-12 h-12 relative mr-3">
+                            <svg viewBox="0 0 100 100" class="w-full h-full">
+                                <path d="M20,20 L80,20 L80,80 L20,80 Z" fill="none" stroke="#165DFF" stroke-width="2" />
+                                <path d="M20,20 L80,80" fill="none" stroke="#165DFF" stroke-width="2" />
+                                <path d="M80,20 L20,80" fill="none" stroke="#165DFF" stroke-width="2" />
+                            </svg>
+                        </div>
+                        <h2 class="text-xl font-bold text-primary">Secg<span class="text-white">Power</span></h2>
+                    </div>
+                    <p class="text-gray-400 mb-6">专注“三年游戏，五年开发”</p>
+                </div>
+                
+                <div>
+                    <h3 class="text-lg font-semibold mb-6">快速链接</h3>
+                    <ul class="space-y-3">
+                        <li><a href="/" class="text-gray-400 hover:text-primary transition-colors duration-300">首页</a></li>
+                        <li><a href="/docs/" class="text-gray-400 hover:text-primary transition-colors duration-300">文档</a></li>
+                        <li><a href="/projects/" class="text-gray-400 hover:text-primary transition-colors duration-300">产品</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-800 pt-8 flex flex-col md:flex-row justify-between items-center">
+                <p class="text-gray-400 text-sm mb-4 md:mb-0">© GitHub Page 保留所有权利。</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // 导航栏滚动效果
+        const navbar = document.getElementById('navbar');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 50) {
+                navbar.classList.add('shadow-md');
+                navbar.classList.remove('py-4');
+                navbar.classList.add('py-3');
+            } else {
+                navbar.classList.remove('shadow-md');
+                navbar.classList.remove('py-3');
+                navbar.classList.add('py-4');
+            }
+        });
+
+        // 移动端菜单切换
+        const menuToggle = document.getElementById('menu-toggle');
+        const mobileMenu = document.getElementById('mobile-menu');
+        menuToggle.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        // 平滑滚动
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href');
+                const targetElement = document.querySelector(targetId);
+                
+                if (targetElement) {
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 100,
+                        behavior: 'smooth'
+                    });
+                    
+                    // 更新导航激活状态
+                    document.querySelectorAll('.doc-nav-active').forEach(el => {
+                        el.classList.remove('doc-nav-active');
+                    });
+                    this.classList.add('doc-nav-active');
+                }
+            });
+        });
+
+        // 滚动动画
+        const scrollElements = document.querySelectorAll('[data-scroll-animate]');
+        const elementInView = (el) => {
+            const elementTop = el.getBoundingClientRect().top;
+            return elementTop <= (window.innerHeight || document.documentElement.clientHeight) / 1.25;
+        };
+
+        const displayScrollElement = (element) => {
+            element.classList.add('animate-fade-in');
+            element.classList.remove('opacity-0');
+        };
+
+        const handleScrollAnimation = () => {
+            scrollElements.forEach(el => {
+                if (elementInView(el)) displayScrollElement(el);
+            });
+        };
+
+        window.addEventListener('scroll', handleScrollAnimation);
+        // 初始化动画
+        handleScrollAnimation();
+    </script>
+</body>
+</html>
