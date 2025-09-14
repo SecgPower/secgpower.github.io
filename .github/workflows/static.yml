@@ -28,7 +28,7 @@ jobs:
           from xml.etree import ElementTree as ET
 
           # 配置：替换为你的GitHub Pages域名（如 https://username.github.io/repo）
-          BASE_URL = "https://secgpower.github.io/"
+          BASE_URL = "https://secgpower.github.io"
           # 网站根目录（当前workflow的根目录，无需改）
           ROOT_DIR = "."
           # 要排除的目录（如node_modules、_site等，按需添加）
