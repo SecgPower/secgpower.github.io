@@ -19,8 +19,7 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-
-      # 新增步骤1：生成站点地图（纯HTML专用）
+        
       - name: Generate sitemap.xml for static HTML
         run: |
           # 创建Python脚本，遍历HTML文件生成sitemap
@@ -29,7 +28,7 @@ jobs:
           from xml.etree import ElementTree as ET
 
           # 配置：替换为你的GitHub Pages域名（如 https://username.github.io/repo）
-          BASE_URL = "https://secgpower.github.io/repo"
+          BASE_URL = "https://secgpower.github.io/"
           # 网站根目录（当前workflow的根目录，无需改）
           ROOT_DIR = "."
           # 要排除的目录（如node_modules、_site等，按需添加）
@@ -68,7 +67,7 @@ jobs:
           python3 generate_sitemap.py
         env:
           # 这里替换为你的GitHub Pages实际域名，不要带最后的斜杠
-          BASE_URL: "https://secgpower.github.io/repo"
+          BASE_URL: "https://secgpower.github.io"
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
