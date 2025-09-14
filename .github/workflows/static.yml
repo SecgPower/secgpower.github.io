@@ -1,28 +1,16 @@
-# Simple workflow for deploying static content to GitHub Pages
 name: Deploy static content to Pages
-
 on:
-  # Runs on pushes targeting the default branch
   push:
     branches: ["main"]
-
-  # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
-
-# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
 permissions:
   contents: read
   pages: write
   id-token: write
-
-# Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued.
-# However, do NOT cancel in-progress runs as we want to allow these production deployments to complete.
 concurrency:
   group: "pages"
   cancel-in-progress: false
-
 jobs:
-  # Single deploy job since we're just deploying
   deploy:
     environment:
       name: github-pages
@@ -31,13 +19,65 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      # 新增步骤1：生成站点地图（纯HTML专用）
+      - name: Generate sitemap.xml for static HTML
+        run: |
+          # 创建Python脚本，遍历HTML文件生成sitemap
+          cat > generate_sitemap.py << 'EOF'
+          import os
+          from xml.etree import ElementTree as ET
+
+          # 配置：替换为你的GitHub Pages域名（如 https://username.github.io/repo）
+          BASE_URL = "https://secgpower.github.io/repo"
+          # 网站根目录（当前workflow的根目录，无需改）
+          ROOT_DIR = "."
+          # 要排除的目录（如node_modules、_site等，按需添加）
+          EXCLUDE_DIRS = ["node_modules", ".git", "_site", "r18"]
+
+          # 创建XML根节点
+          urlset = ET.Element("urlset", xmlns="http://www.sitemaps.org/schemas/sitemap/0.9")
+
+          # 遍历所有HTML文件
+          for dirpath, dirnames, filenames in os.walk(ROOT_DIR):
+              # 跳过排除目录
+              dirnames[:] = [d for d in dirnames if d not in EXCLUDE_DIRS]
+              for filename in filenames:
+                  if filename.endswith(".html"):
+                      # 拼接文件路径，生成URL
+                      file_path = os.path.join(dirpath, filename)
+                      # 转换为相对路径（相对于根目录）
+                      rel_path = os.path.relpath(file_path, ROOT_DIR)
+                      # 生成完整URL（处理index.html，简化为目录形式）
+                      if rel_path == "index.html":
+                          url = BASE_URL + "/"
+                      else:
+                          url = f"{BASE_URL}/{rel_path.replace(os.sep, '/')}"
+                      # 添加到XML
+                      url_elem = ET.SubElement(urlset, "url")
+                      loc_elem = ET.SubElement(url_elem, "loc")
+                      loc_elem.text = url
+
+          # 保存sitemap.xml到根目录
+          tree = ET.ElementTree(urlset)
+          ET.indent(tree, space="  ")
+          tree.write("sitemap.xml", encoding="utf-8", xml_declaration=True)
+          print("sitemap.xml generated successfully!")
+          EOF
+          # 运行Python脚本生成sitemap
+          python3 generate_sitemap.py
+        env:
+          # 这里替换为你的GitHub Pages实际域名，不要带最后的斜杠
+          BASE_URL: "https://secgpower.github.io/repo"
+
       - name: Setup Pages
         uses: actions/configure-pages@v5
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          # Upload entire repository
-          path: '.'
+          path: '.'  # 上传整个仓库（含新生成的sitemap.xml）
+
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
