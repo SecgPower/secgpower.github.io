@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>祝妈妈生日快乐</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, #ffccd5, #ff8fa3);
+            font-family: "Microsoft YaHei", sans-serif;
+            color: #5a2e2e;
+        }
+        .card {
+            background: white;
+            padding: 3rem 5rem;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            text-align: center;
+        }
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+            color: #e63946;
+        }
+        .message {
+            font-size: 1.2rem;
+            line-height: 1.8;
+            margin-bottom: 2rem;
+        }
+        .countdown {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #e63946;
+            padding: 1rem 2rem;
+            background: #fff0f3;
+            border-radius: 10px;
+        }
+        .flower {
+            margin-top: 2rem;
+            font-size: 3rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h1 id="title">亲爱的妈妈</h1>
+        <div class="message" id="message">
+            感谢您一直以来的付出与陪伴，您的爱永远是我最温暖的港湾
+        </div>
+        <div class="countdown" id="countdown"></div>
+        <div class="flower">🌸💐🌸</div>
+    </div>
+
+    <script>
+        // 请在此处设置妈妈的生日（月份：0-11，日期：1-31）
+        const momBirthday = { month: 8, day: 26 }; // 示例：5月25日（月份0代表1月）
+
+        function calculateDays() {
+            const today = new Date();
+            const currentYear = today.getFullYear();
+            // 创建今年的生日日期
+            let birthdayThisYear = new Date(currentYear, momBirthday.month, momBirthday.day);
+            // 创建明年的生日日期（用于跨年计算）
+            let birthdayNextYear = new Date(currentYear + 1, momBirthday.month, momBirthday.day);
+
+            // 计算时间差（毫秒）
+            let timeDiff;
+            if (today <= birthdayThisYear) {
+                // 今年生日还没到
+                timeDiff = birthdayThisYear - today;
+            } else {
+                // 今年生日已过，计算到明年生日的时间
+                timeDiff = birthdayNextYear - today;
+            }
+
+            // 转换为天数（向下取整，忽略时分秒差异）
+            const daysLeft = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
+            return daysLeft;
+        }
+
+        function updateDisplay() {
+            const daysLeft = calculateDays();
+            const countdownEl = document.getElementById('countdown');
+            const titleEl = document.getElementById('title');
+
+            if (daysLeft === 0) {
+                // 今天是生日
+                titleEl.textContent = '亲爱的妈妈，生日快乐！';
+                countdownEl.innerHTML = '今天是您的生日，祝您永远健康、快乐、幸福！';
+            } else {
+                // 非生日当天，显示剩余天数
+                countdownEl.innerHTML = `距离您的生日还有 <span style="font-size: 2rem;">${daysLeft}</span> 天`;
+            }
+        }
+
+        // 页面加载时立即更新
+        updateDisplay();
+    </script>
+</body>
+</html>
