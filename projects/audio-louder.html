@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>清朝老音质生成工具</title>
+    <style>
+        .container { max-width: 600px; margin: 2rem auto; padding: 0 1rem; }
+        .form-group { margin: 1.5rem 0; }
+        label { display: block; margin-bottom: 0.5rem; font-weight: bold; }
+        input, button { padding: 0.8rem; width: 100%; box-sizing: border-box; border: 1px solid #ddd; border-radius: 4px; }
+        button { background: #28a745; color: white; border: none; cursor: pointer; }
+        button:disabled { background: #ccc; cursor: not-allowed; }
+        button.secondary { background: #007bff; margin-top: 0.8rem; }
+        #status { margin-top: 1rem; color: #666; }
+        .preview-section { margin-top: 1.5rem; padding: 1rem; border: 1px dashed #ddd; border-radius: 4px; display: none; }
+        .preview-title { font-weight: bold; margin-bottom: 1rem; color: #333; }
+        audio { width: 100%; margin-top: 0.5rem; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>清朝老音质生成工具</h1>
+        <!-- 音频上传 -->
+        <div class="form-group">
+            <label for="audioFile">上传音频文件</label>
+            <input type="file" id="audioFile" accept="audio/*" required>
+        </div>
+        <!-- 百分比增益输入 -->
+        <div class="form-group">
+            <label for="gainValue">增益调整(%) - 范围：0 至 1000</label>
+            <input type="number" id="gainValue" min="0" max="1000" step="10" value="100" required>
+            <small>提示：100%为原音量，200%为音量翻倍，1000%为最大（10倍音量）。推荐450%</small>
+        </div>
+        <!-- 操作按钮组 -->
+        <button id="previewBtn" disabled class="secondary">实时预览当前增益效果</button>
+        <button id="processBtn" disabled>处理并生成可下载音频</button>
+        <!-- 状态提示 -->
+        <div id="status"></div>
+        <!-- 预览区域（含原音频+处理后预览） -->
+        <div class="preview-section" id="originalPreview">
+            <div class="preview-title">原音频预览</div>
+            <audio id="originalAudio" controls></audio>
+        </div>
+        <div class="preview-section" id="processedPreview">
+            <div class="preview-title">当前增益效果预览（实时）</div>
+            <audio id="livePreviewAudio" controls></audio>
+        </div>
+        <!-- 下载区域 -->
+        <div class="form-group" id="downloadGroup" style="display: none; margin-top: 1.5rem;">
+            <a id="downloadLink" download="processed-audio.wav">
+                <button type="button">下载处理后的音频（WAV格式）</button>
+            </a>
+        </div>
+    </div>
+
+    <script>
+         
+        const audioFileInput = document.getElementById('audioFile');
+        const gainValueInput = document.getElementById('gainValue');
+        const previewBtn = document.getElementById('previewBtn');
+        const processBtn = document.getElementById('processBtn');
+        const statusDiv = document.getElementById('status');
+        const originalAudio = document.getElementById('originalAudio');
+        const livePreviewAudio = document.getElementById('livePreviewAudio');
+        const originalPreview = document.getElementById('originalPreview');
+        const processedPreview = document.getElementById('processedPreview');
+        const downloadLink = document.getElementById('downloadLink');
+        const downloadGroup = document.getElementById('downloadGroup');
+        
+        let audioContext;  
+        let originalAudioBuffer;  
+
+         
+        function initAudioContext() {
+            if (!audioContext) {
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            }
+        }
+
+         
+        audioFileInput.addEventListener('change', async function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            try {
+                statusDiv.textContent = "正在加载音频文件...";
+                 
+                const arrayBuffer = await readFileAsArrayBuffer(file);
+                originalAudioBuffer = await audioContext.decodeAudioData(arrayBuffer);
+                
+                 
+                const originalWav = audioBufferToWav(originalAudioBuffer);
+                const originalUrl = URL.createObjectURL(originalWav);
+                originalAudio.src = originalUrl;
+                
+                 
+                originalPreview.style.display = "block";
+                previewBtn.disabled = false;
+                processBtn.disabled = false;
+                statusDiv.textContent = "音频加载完成，可预览或处理";
+            } catch (error) {
+                statusDiv.textContent = `音频加载失败：${error.message}`;
+            }
+        });
+
+         
+        previewBtn.addEventListener('click', async function() {
+            initAudioContext();
+             
+            if (audioContext.state === 'suspended') {
+                await audioContext.resume();
+            }
+
+            const gainPercent = parseInt(gainValueInput.value);
+            const linearGain = gainPercent / 100;  
+
+             
+            if (livePreviewAudio.src) {
+                livePreviewAudio.pause();
+                URL.revokeObjectURL(livePreviewAudio.src);  
+            }
+
+            try {
+                statusDiv.textContent = `正在生成${gainPercent}%增益的预览效果...`;
+                 
+                const source = audioContext.createBufferSource();
+                source.buffer = originalAudioBuffer;
+                
+                 
+                const gainNode = audioContext.createGain();
+                gainNode.gain.value = linearGain;
+
+                 
+                source.connect(gainNode);
+                gainNode.connect(audioContext.destination);
+
+                 
+                const processedBuffer = await renderAudioBuffer(audioContext, originalAudioBuffer, gainNode);
+                const previewWav = audioBufferToWav(processedBuffer);
+                const previewUrl = URL.createObjectURL(previewWav);
+                livePreviewAudio.src = previewUrl;
+
+                 
+                processedPreview.style.display = "block";
+                statusDiv.textContent = `已生成${gainPercent}%增益预览，可播放试听`;
+            } catch (error) {
+                statusDiv.textContent = `预览生成失败：${error.message}`;
+            }
+        });
+
+         
+        processBtn.addEventListener('click', async function() {
+            if (!originalAudioBuffer) {
+                statusDiv.textContent = "请先上传音频文件";
+                return;
+            }
+
+            initAudioContext();
+            if (audioContext.state === 'suspended') {
+                await audioContext.resume();
+            }
+
+            const gainPercent = parseInt(gainValueInput.value);
+            const linearGain = gainPercent / 100;
+            statusDiv.textContent = `正在处理音频（${gainPercent}%增益）...`;
+            processBtn.disabled = true;
+            previewBtn.disabled = true;
+
+            try {
+                 
+                const gainNode = audioContext.createGain();
+                gainNode.gain.value = linearGain;
+
+                 
+                const processedBuffer = await renderAudioBuffer(audioContext, originalAudioBuffer, gainNode);
+                const wavBlob = audioBufferToWav(processedBuffer);
+                const downloadUrl = URL.createObjectURL(wavBlob);
+
+                 
+                downloadLink.href = downloadUrl;
+                downloadGroup.style.display = "block";
+                statusDiv.textContent = `音频处理完成（${gainPercent}%增益），可下载`;
+            } catch (error) {
+                statusDiv.textContent = `处理失败：${error.message}`;
+            } finally {
+                processBtn.disabled = false;
+                previewBtn.disabled = false;
+            }
+        });
+
+         
+        function readFileAsArrayBuffer(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = () => resolve(reader.result);
+                reader.onerror = () => reject(reader.error);
+                reader.readAsArrayBuffer(file);
+            });
+        }
+
+         
+        function renderAudioBuffer(context, inputBuffer, gainNode) {
+            return new Promise((resolve) => {
+                const offlineContext = new OfflineAudioContext({
+                    numberOfChannels: inputBuffer.numberOfChannels,
+                    length: inputBuffer.length,
+                    sampleRate: inputBuffer.sampleRate
+                });
+
+                const source = offlineContext.createBufferSource();
+                source.buffer = inputBuffer;
+                const offlineGainNode = offlineContext.createGain();
+                offlineGainNode.gain.value = gainNode.gain.value;
+
+                source.connect(offlineGainNode);
+                offlineGainNode.connect(offlineContext.destination);
+                source.start();
+
+                offlineContext.startRendering().then(resolve);
+            });
+        }
+
+         
+        function audioBufferToWav(buffer) {
+            const numChannels = buffer.numberOfChannels;
+            const sampleRate = buffer.sampleRate;
+            const bitsPerSample = 16;
+            const bytesPerSample = bitsPerSample / 8;
+            const blockAlign = numChannels * bytesPerSample;
+
+             
+            const header = new ArrayBuffer(44);
+            const view = new DataView(header);
+            writeString(view, 0, 'RIFF');
+            view.setUint32(4, 44 + buffer.length * blockAlign, true);
+            writeString(view, 8, 'WAVE');
+            writeString(view, 12, 'fmt ');
+            view.setUint32(16, 16, true);
+            view.setUint16(20, 1, true);
+            view.setUint16(22, numChannels, true);
+            view.setUint32(24, sampleRate, true);
+            view.setUint32(28, sampleRate * blockAlign, true);
+            view.setUint16(32, blockAlign, true);
+            view.setUint16(34, bitsPerSample, true);
+            writeString(view, 36, 'data');
+            view.setUint32(40, buffer.length * blockAlign, true);
+
+             
+            const data = new ArrayBuffer(buffer.length * blockAlign);
+            const dataView = new DataView(data);
+            let offset = 0;
+            for (let i = 0; i < buffer.length; i++) {
+                for (let channel = 0; channel < numChannels; channel++) {
+                    const sample = Math.max(-1, Math.min(1, buffer.getChannelData(channel)[i]));
+                    const intSample = sample < 0 ? sample * 0x8000 : sample * 0x7FFF;
+                    dataView.setInt16(offset, intSample, true);
+                    offset += bytesPerSample;
+                }
+            }
+
+            return new Blob([header, data], { type: 'audio/wav' });
+        }
+
+         
+        function writeString(view, offset, string) {
+            for (let i = 0; i < string.length; i++) {
+                view.setUint8(offset + i, string.charCodeAt(i));
+            }
+        }
+
+         
+        window.addEventListener('load', function() {
+             
+            document.body.addEventListener('click', initAudioContext, { once: true });
+        });
+    </script>
+</body>
+</html>
